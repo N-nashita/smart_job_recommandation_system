@@ -1,0 +1,13 @@
+/* Recruiter login page. Loads after home.css and register.css */
+.reg.login { align-items: center; }
+@media (max-width: 920px) { .reg.login .form-card { order: -1; } }   /* on phones, show the form first */
+
+.login-form { display: grid; gap: 18px; }
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.row-between .cb { font-size: .9rem; }
+.forgot { color: var(--accent-deep); font-weight: 500; font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; }
+.btn.block { width: 100%; justify-content: center; padding: 14px 24px; font-size: 1rem; }
+.banner.ok { background: var(--mint); color: var(--accent-deep); }
+
+.switch-note { text-align: center; margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: .92rem; }
+.switch-note a { color: var(--accent-deep); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }

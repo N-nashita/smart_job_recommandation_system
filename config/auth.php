@@ -113,5 +113,13 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+        'guards' => [
+        // ...keep 'web'
+        'recruiter' => ['driver' => 'session', 'provider' => 'recruiters'],
+    ],
+    'providers' => [
+        // ...keep 'users'
+        'recruiters' => ['driver' => 'eloquent', 'model' => App\Models\Recruiter::class],
+    ],
 
 ];
