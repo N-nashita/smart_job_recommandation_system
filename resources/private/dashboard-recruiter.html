@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard — JobSphere</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style/home.css">
+    <link rel="stylesheet" href="style/recruiter-dashboard.css">
+</head>
+
+<body class="app">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="i-home" viewBox="0 0 24 24">
+                <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />
+            </symbol>
+            <symbol id="i-users" viewBox="0 0 24 24">
+                <circle cx="9" cy="8" r="3.5" />
+                <path
+                    d="M2.5 20c.6-3.5 3.2-5.5 6.5-5.5s5.9 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .6 3.2 2.4 3.5 5.2" />
+            </symbol>
+            <symbol id="i-brief" viewBox="0 0 24 24">
+                <rect x="3" y="7" width="18" height="13" rx="3" />
+                <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18" />
+            </symbol>
+            <symbol id="i-cal" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="16" rx="3" />
+                <path d="M8 3v4M16 3v4M3 11h18" />
+            </symbol>
+            <symbol id="i-building" viewBox="0 0 24 24">
+                <path
+                    d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 8h4M8 12h4M8 16h4" />
+            </symbol>
+            <symbol id="i-search" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+            </symbol>
+            <symbol id="i-bell" viewBox="0 0 24 24">
+                <path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21h4" />
+            </symbol>
+            <symbol id="i-shield" viewBox="0 0 24 24">
+                <path d="M12 3l8 3v6c0 4.5-3.4 7.7-8 9-4.6-1.3-8-4.5-8-9V6z" />
+                <path d="M9 12l2 2 4-4" />
+            </symbol>
+            <symbol id="i-plus" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12h14" />
+            </symbol>
+            <symbol id="i-spark" viewBox="0 0 24 24">
+                <path
+                    d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z" />
+            </symbol>
+            <symbol id="i-phone" viewBox="0 0 24 24">
+                <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" />
+            </symbol>
+            <symbol id="i-refresh" viewBox="0 0 24 24">
+                <path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4" />
+            </symbol>
+            <symbol id="i-check" viewBox="0 0 24 24">
+                <path d="M5 12.5l4.5 4.5L19 7.5" />
+            </symbol>
+        </defs>
+    </svg>
+
+    <div class="shell">
+        <!-- sidebar -->
+        <aside class="side glass" aria-label="Main menu">
+            <a href="index.html" class="logo"><i></i> JobSphere</a>
+            <a class="nv on" href="#overview" data-v="overview"><svg class="ic">
+                    <use href="#i-home" />
+                </svg><span>Overview</span></a>
+            <a class="nv" href="#applicants" data-v="applicants"><svg class="ic">
+                    <use href="#i-users" />
+                </svg><span>Applicants</span><em>24</em></a>
+            <a class="nv" href="#jobs" data-v="jobs"><svg class="ic">
+                    <use href="#i-brief" />
+                </svg><span>My jobs</span></a>
+            <a class="nv" href="#interviews" data-v="interviews"><svg class="ic">
+                    <use href="#i-cal" />
+                </svg><span>Interviews</span></a>
+            <a class="nv" href="#"><svg class="ic">
+                    <use href="#i-building" />
+                </svg><span>Company</span></a>
+            <div class="grow"></div>
+            <a class="nv" href="#" id="logout"><svg class="ic">
+                    <use href="#i-building" />
+                </svg><span>Log out</span></a>
+            <div class="co">
+                <div class="row">
+                    <div class="avatar mint">A</div>
+                    <div><strong>Acme Labs</strong><small>Technology · Khulna</small></div>
+                </div>
+                <span class="vb"><svg class="ic">
+                        <use href="#i-shield" />
+                    </svg> Verified company</span>
+            </div>
+        </aside>
+
+        <main class="main">
+            <!-- top bar -->
+            <div class="top">
+                <label class="search"><svg class="ic">
+                        <use href="#i-search" />
+                    </svg><input id="q" type="search" placeholder="Search candidates, skills or roles"
+                        aria-label="Search candidates"></label>
+                <button class="icon-btn" aria-label="Notifications"><svg class="ic">
+                        <use href="#i-bell" />
+                    </svg><i></i></button>
+                <a href="#" class="btn primary"><svg class="ic">
+                        <use href="#i-plus" />
+                    </svg> Post a job</a>
+            </div>
+
+            <!-- welcome + focus -->
+            <section class="welcome" data-view="overview">
+                <div class="hello reveal">
+                    <div class="eyebrow">Recruiter workspace</div>
+                    <h1 id="greet">Good morning, <em>Amina.</em></h1>
+                    <p>9 candidates updated their profiles since yesterday. Two of them now match your Backend role
+                        above 90%.</p>
+                    <div class="chips">
+                        <div class="chip"><b>24</b><span>New applicants</span></div>
+                        <div class="chip"><b id="cInt">5</b><span>Interviews</span></div>
+                        <div class="chip"><b>9</b><span>Profile updates</span></div>
+                    </div>
+                    <div class="quick">
+                        <a href="#applicants" class="btn light sm" data-v="applicants">Review top matches</a>
+                        <a href="#jobs" class="btn outline-w sm" data-v="jobs">Manage jobs</a>
+                    </div>
+                </div>
+                <div class="glass focus reveal">
+                    <h3><svg class="ic spark" style="fill:none;stroke:currentColor">
+                            <use href="#i-spark" />
+                        </svg> Today's focus <span class="ai">Suggested</span></h3>
+                    <p class="sub">Picked from candidate activity and your open roles.</p>
+                    <div class="bar"><i id="bar"></i></div>
+                    <ul class="tasks" id="tasks">
+                        <li><label><input type="checkbox"><span>Review 3 strong new matches<small>Backend Engineer ·
+                                        85%+ compatibility</small></span></label></li>
+                        <li><label><input type="checkbox"><span>Call Rafi Ahmed for interview<small>Updated his
+                                        portfolio 2 hours ago</small></span></label></li>
+                        <li><label><input type="checkbox"><span>Publish the UI Designer draft<small>Posting passed the
+                                        authenticity check</small></span></label></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- matches + schedule -->
+            <section class="cols" id="cols">
+                <div class="glass card reveal" id="matches" data-view="overview applicants">
+                    <div class="card-head">
+                        <div>
+                            <h3>Top matches</h3>
+                            <p class="sub">Ranked by compatibility with your open roles</p>
+                        </div>
+                        <a href="#applicants" class="btn ghost sm" id="viewAll" data-v="applicants">View all</a>
+                        <div class="tabs" id="tabs" role="tablist">
+                            <button class="on" data-f="all">All</button>
+                            <button data-f="strong">90%+</button>
+                            <button data-f="updated">Updated</button>
+                            <button data-f="short">Shortlisted</button>
+                        </div>
+                    </div>
+                    <div class="cands" id="cands"></div>
+                </div>
+
+                <div class="side-col">
+                    <div class="glass card reveal" id="schedule" data-view="overview interviews">
+                        <div class="card-head" style="margin-bottom:14px">
+                            <div>
+                                <h3>Today's interviews</h3>
+                                <p class="sub" id="today">Tuesday</p>
+                            </div>
+                        </div>
+                        <ul class="tl" id="tl"></ul>
+                    </div>
+                    <div class="glass card reveal" data-view="applicants interviews">
+                        <div class="card-head" style="margin-bottom:6px">
+                            <div>
+                                <h3>Candidate activity</h3>
+                                <p class="sub">Live profile updates</p>
+                            </div>
+                        </div>
+                        <ul class="feed">
+                            <li><span class="pip"><svg class="ic">
+                                        <use href="#i-refresh" />
+                                    </svg></span>
+                                <div><b>Rafi Ahmed</b> added a new project<small>2 hours ago · match rose to 91%</small>
+                                </div>
+                            </li>
+                            <li><span class="pip"><svg class="ic">
+                                        <use href="#i-refresh" />
+                                    </svg></span>
+                                <div><b>Sadia Islam</b> completed an AWS certificate<small>5 hours ago</small></div>
+                            </li>
+                            <li><span class="pip c"><svg class="ic">
+                                        <use href="#i-check" />
+                                    </svg></span>
+                                <div><b>Nabil Hasan</b> accepted your interview call<small>Yesterday</small></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- pipeline -->
+            <section class="glass card reveal" data-view="applicants">
+                <div class="card-head">
+                    <div>
+                        <h3>Hiring pipeline</h3>
+                        <p class="sub">Shortlist or call a candidate and they move along automatically</p>
+                    </div>
+                </div>
+                <div class="pipe" id="pipe"></div>
+            </section>
+
+            <!-- jobs -->
+            <section class="glass card reveal" data-view="jobs">
+                <div class="card-head">
+                    <div>
+                        <h3>Your jobs</h3>
+                        <p class="sub">Every posting is checked before it goes live</p>
+                    </div><a href="#" class="btn ghost sm">View all</a>
+                </div>
+                <div class="jobs cols even" style="gap:12px">
+                    <div class="job">
+                        <div class="jt"><strong>Backend Engineer</strong><span class="st">Live</span></div><small>Khulna
+                            · Full-time</small>
+                        <div class="meter"><i style="width:78%"></i></div>
+                        <div class="jf"><span>18 applicants</span><span>8 strong matches</span></div>
+                    </div>
+                    <div class="job">
+                        <div class="jt"><strong>Frontend Developer</strong><span class="st">Live</span></div>
+                        <small>Remote · Full-time</small>
+                        <div class="meter"><i style="width:46%"></i></div>
+                        <div class="jf"><span>6 applicants</span><span>2 strong matches</span></div>
+                    </div>
+                    <div class="job">
+                        <div class="jt"><strong>UI Designer</strong><span class="st draft">Draft</span></div>
+                        <small>Dhaka · Contract</small>
+                        <div class="meter"><i style="width:0"></i></div>
+                        <div class="jf"><span>Not published</span><span>Authenticity check passed</span></div>
+                    </div>
+                    <div class="job" style="display:grid;place-items:center;border-style:dashed;background:transparent">
+                        <a href="#" class="btn ghost sm"><svg class="ic">
+                                <use href="#i-plus" />
+                            </svg> Create new posting</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- interview modal -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+        <div class="sheet">
+            <h3 id="mt">Call for interview</h3>
+            <p id="mp">Pick a slot. The candidate sees it on their profile right away.</p>
+            <div class="slots" id="slots"></div>
+            <div class="row"><button class="btn ghost sm" id="cancel" type="button">Cancel</button><button
+                    class="btn primary sm" id="send" type="button">Send invitation</button></div>
+        </div>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+        (() => {
+            const $ = s => document.querySelector(s);
+            const people = [
+                { id: 1, n: 'Rafi Ahmed', r: 'Backend Engineer · 3 yrs', m: 94, sk: ['Laravel', 'MySQL', 'REST APIs'], up: true, av: 'sage' },
+                { id: 2, n: 'Sadia Islam', r: 'Backend Engineer · 2 yrs', m: 91, sk: ['PHP', 'AWS', 'Docker'], up: true, av: 'blush' },
+                { id: 3, n: 'Nabil Hasan', r: 'Full-stack Developer · 4 yrs', m: 88, sk: ['Vue', 'Laravel', 'Redis'], up: false, av: 'sand' },
+                { id: 4, n: 'Tania Akter', r: 'Frontend Developer · 1 yr', m: 82, sk: ['React', 'CSS', 'Figma'], up: false, av: 'mint' }
+            ];
+            const state = {}; people.forEach(p => state[p.id] = 'applied');   // applied | short | interview
+            const slotsList = ['10:00', '11:30', '14:00', '15:30', '16:30', '17:30'];
+            let filter = 'all', query = '', target = null, slot = null;
+            const sched = [
+                { t: '10:00', n: 'Nabil Hasan', d: 'Technical round · Meet', now: true },
+                { t: '14:30', n: 'Mim Chowdhury', d: 'HR intro · Phone' }
+            ];
+
+            const ini = n => n.split(' ').map(w => w[0]).slice(0, 2).join('');
+            const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2400); };
+
+            $('#greet').innerHTML = (h => (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'))(new Date().getHours()) + ', <em>Amina.</em>';
+            $('#today').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+
+            function renderCands() {
+                const list = people.filter(p => {
+                    if (filter === 'strong' && p.m < 90) return false;
+                    if (filter === 'updated' && !p.up) return false;
+                    if (filter === 'short' && state[p.id] === 'applied') return false;
+                    const hay = (p.n + ' ' + p.r + ' ' + p.sk.join(' ')).toLowerCase();
+                    return hay.includes(query);
+                });
+                const ov = !location.hash || location.hash === '#overview';
+                if (ov) list.splice(3);
+                $('#cands').innerHTML = list.length ? list.map(p => `
+            <article class="cand">
+                <div class="avatar ${p.av}">${ini(p.n)}</div>
+                <div>
+                    <div class="nm">${p.n} ${p.up ? '<span class="tag">Updated profile</span>' : ''} ${state[p.id] === 'interview' ? '<span class="tag g">Interview set</span>' : ''}</div>
+                    <div class="rl">${p.r}</div>
+                    <div class="skills">${p.sk.map(s => `<span>${s}</span>`).join('')}</div>
+                    <div class="act">
+                        <button class="btn mini ${state[p.id] !== 'applied' ? 'done' : 'ghost'}" data-a="short" data-id="${p.id}">${state[p.id] !== 'applied' ? 'Shortlisted ✓' : 'Shortlist'}</button>
+                        <button class="btn mini primary" data-a="call" data-id="${p.id}" ${state[p.id] === 'interview' ? 'disabled style="opacity:.55;cursor:default"' : ''}><svg class="ic"><use href="#i-phone"/></svg> ${state[p.id] === 'interview' ? 'Invited' : 'Call for interview'}</button>
+                    </div>
+                </div>
+                <div class="right"><div class="ring ${p.m < 85 ? 'warm' : ''}" style="--p:${p.m}"><b>${p.m}</b></div>match</div>
+            </article>`).join('') : '<div class="empty">No candidates match this view yet.</div>';
+            }
+
+            function renderPipe() {
+                const lanes = [['Applied', 'applied', 18], ['Shortlisted', 'short', 6], ['Interview', 'interview', 0], ['Offer', 'offer', 0]];
+                $('#pipe').innerHTML = lanes.map(([label, key]) => {
+                    const mine = people.filter(p => state[p.id] === key);
+                    const base = key === 'applied' ? 20 : key === 'short' ? 4 : key === 'interview' ? 3 : 1;
+                    return `<div class="lane"><h4>${label} <b>${base + mine.length}</b></h4>${mine.map(p => `<div class="pc"><div class="avatar ${p.av}">${ini(p.n)}</div><span>${p.n}</span></div>`).join('') || '<div class="rl" style="font-size:.78rem;color:var(--muted)">+ ' + base + ' earlier</div>'}</div>`;
+                }).join('');
+                $('#cInt').textContent = 5 + people.filter(p => state[p.id] === 'interview').length;
+            }
+
+            function renderTl(newest) {
+                $('#tl').innerHTML = sched.map(e => `<li class="${e.now ? 'now' : ''} ${e.n === newest ? 'new' : ''}"><time>${e.t}</time><span class="dot"></span><div class="ev"><b>${e.n}</b><small>${e.d}</small></div></li>`).join('');
+            }
+
+            const all = () => { renderCands(); renderPipe(); };
+
+            $('#tabs').addEventListener('click', e => {
+                const b = e.target.closest('button'); if (!b) return;
+                document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+                filter = b.dataset.f; renderCands();
+            });
+            $('#q').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderCands(); });
+
+            $('#cands').addEventListener('click', e => {
+                const b = e.target.closest('button[data-a]'); if (!b || b.disabled) return;
+                const p = people.find(x => x.id == b.dataset.id);
+                if (b.dataset.a === 'short') {
+                    state[p.id] = state[p.id] === 'applied' ? 'short' : 'applied';
+                    all(); toast(state[p.id] === 'short' ? p.n + ' shortlisted' : p.n + ' removed from shortlist');
+                } else {
+                    target = p; slot = null;
+                    $('#mp').textContent = 'Pick a slot for ' + p.n + '. They will see it on their profile right away.';
+                    $('#slots').innerHTML = slotsList.map(s => `<button type="button">${s}</button>`).join('');
+                    $('#modal').classList.add('open');
+                }
+            });
+            $('#slots').addEventListener('click', e => {
+                const b = e.target.closest('button'); if (!b) return;
+                slot = b.textContent; document.querySelectorAll('#slots button').forEach(x => x.classList.toggle('on', x === b));
+            });
+            const close = () => $('#modal').classList.remove('open');
+            $('#cancel').onclick = close;
+            $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') close(); });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+            $('#send').onclick = () => {
+                if (!slot) return toast('Pick a time slot first');
+                state[target.id] = 'interview';
+                sched.push({ t: slot, n: target.n, d: 'Interview · invitation sent' });
+                sched.sort((a, b) => a.t.localeCompare(b.t));
+                close(); all(); renderTl(target.n); toast('Invitation sent to ' + target.n);
+            };
+
+            // focus checklist
+            const boxes = [...document.querySelectorAll('#tasks input')];
+            const prog = () => { $('#bar').style.width = Math.round(boxes.filter(b => b.checked).length / boxes.length * 100) + '%'; };
+            boxes.forEach(b => b.addEventListener('change', prog)); prog();
+
+            // reveal on scroll
+            const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .08 }) : null;
+            document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+
+            // views: overview stays light, the rest live in their own sections
+            const VIEWS = ['overview', 'applicants', 'jobs', 'interviews'];
+            function show() {
+                const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'overview';
+                document.querySelectorAll('[data-view]').forEach(el => { el.hidden = !el.dataset.view.split(' ').includes(v); });
+                document.querySelectorAll('.side a.nv').forEach(a => a.classList.toggle('on', a.dataset.v === v));
+                const ov = v === 'overview';
+                $('#tabs').hidden = ov; $('#viewAll').hidden = !ov;
+                $('#matches h3').textContent = ov ? 'Top matches' : 'Applicants';
+                $('#cols').classList.toggle('one', $('#matches').hidden);
+                renderCands(); window.scrollTo(0, 0);
+            }
+            window.addEventListener('hashchange', show);
+            show(); all(); renderTl();
+            // real recruiter + company details
+            fetch('/recruiter/dashboard-data', { headers: { Accept: 'application/json' } })
+                .then(r => { if (r.status === 401) { location.href = '/login-recruiter.html'; throw 0; } return r.json(); })
+                .then(d => {
+                    $('#greet em').textContent = d.first_name + '.';
+                    $('.co strong').textContent = d.company_name;
+                    $('.co small').textContent = d.industry + ' · ' + d.hq_location;
+                    $('.co .avatar').textContent = d.company_name[0];
+                    const vb = $('.co .vb');
+                    vb.lastChild.textContent = ' ' + ({ verified: 'Verified company', pending: 'Verification pending', rejected: 'Verification failed' }[d.status]);
+                    if (d.status !== 'verified') { vb.style.background = 'var(--blush)'; vb.style.color = '#a65a40'; }
+                }).catch(() => { });
+
+            $('#logout').onclick = () => {
+                fetch('/recruiter/logout', { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } })
+                    .then(r => { if (r.ok) location.href = '/login-recruiter.html'; else toast('Logout failed'); })
+                    .catch(() => toast('Logout failed'));
+            };
+        })();
+    </script>
+</body>
+
+</html>
