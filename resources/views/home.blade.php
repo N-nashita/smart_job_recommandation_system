@@ -1,61 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.base')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>JobSphere — Work that feels like you</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style/home.css">
-</head>
+@section('title', 'JobSphere — Work that feels like you')
 
-<body>
+@section('content')
     <!-- icon sprite -->
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-        <defs>
-            <symbol id="i-arrow" viewBox="0 0 24 24">
-                <path d="M7 17 17 7M8 7h9v9" />
-            </symbol>
-            <symbol id="i-heart" viewBox="0 0 24 24">
-                <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
-            </symbol>
-            <symbol id="i-spark" viewBox="0 0 24 24">
-                <path
-                    d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z" />
-            </symbol>
-            <symbol id="i-pin" viewBox="0 0 24 24">
-                <path d="M12 21s-6-5.2-6-10a6 6 0 0 1 12 0c0 4.8-6 10-6 10z" />
-                <circle cx="12" cy="11" r="2" />
-            </symbol>
-            <symbol id="i-clock" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 7v5l3 2" />
-            </symbol>
-            <symbol id="i-compass" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M15.5 8.5l-2 5-5 2 2-5z" />
-            </symbol>
-            <symbol id="i-brief" viewBox="0 0 24 24">
-                <rect x="3" y="7" width="18" height="13" rx="2.5" />
-                <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" />
-            </symbol>
-            <symbol id="i-shield" viewBox="0 0 24 24">
-                <path d="M12 3l8 3v6c0 4.5-3.4 7.7-8 9-4.6-1.3-8-4.5-8-9V6z" />
-                <path d="M9 12l2 2 4-4" />
-            </symbol>
-            <symbol id="i-chat" viewBox="0 0 24 24">
-                <path d="M4 5h16v11H9l-5 4z" />
-            </symbol>
-        </defs>
-    </svg>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+        <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 0 1 12 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+        <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+        <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 7.7-8 9-4.6-1.3-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+    </defs></svg>
 
 
     <nav>
-        <a href="index.html" class="logo"><i></i> JobSphere</a>
+        <a href="{{ url('/') }}" class="logo"><i></i> JobSphere</a>
         <div class="links">
             <a href="#jobs">Roles</a>
             <a href="#corners">Explore</a>
@@ -63,8 +26,8 @@
             <a href="#trust">Trust &amp; safety</a>
         </div>
         <div class="nav-cta">
-            <a href="login.html" class="btn ghost">Log in</a>
-            <a href="register.html" class="btn primary">Get started</a>
+            <a href="{{ url('/login') }}" class="btn ghost">Log in</a>
+            <a href="{{ url('/register') }}" class="btn primary">Get started</a>
         </div>
     </nav>
 
@@ -74,21 +37,14 @@
             <div>
                 <div class="eyebrow">The career compass</div>
                 <h1>Work that feels <em>like you.</em></h1>
-                <p class="lead" id="lead">A more considered way to find your next chapter: thoughtfully matched roles,
-                    ambitious teams, and a path that makes sense.</p>
+                <p class="lead" id="lead">A more considered way to find your next chapter: thoughtfully matched roles, ambitious teams, and a path that makes sense.</p>
 
                 <div class="switch" role="tablist">
-                    <button class="on" data-mode="seeker"><svg class="ic">
-                            <use href="#i-compass" />
-                        </svg> I'm looking for work</button>
-                    <button data-mode="hirer"><svg class="ic">
-                            <use href="#i-brief" />
-                        </svg> I'm hiring</button>
+                    <button class="on" data-mode="seeker"><svg class="ic"><use href="#i-compass"/></svg> I'm looking for work</button>
+                    <button data-mode="hirer"><svg class="ic"><use href="#i-brief"/></svg> I'm hiring</button>
                 </div>
                 <div class="cta-row">
-                    <a href="register.html" class="btn primary" id="main-cta">Create my profile <svg class="ic">
-                            <use href="#i-arrow" />
-                        </svg></a>
+                    <a href="{{ url('/register') }}" class="btn primary" id="main-cta">Create my profile <svg class="ic"><use href="#i-arrow"/></svg></a>
                     <span class="cta-note" id="cta-note">Your CV is generated for you.</span>
                 </div>
 
@@ -101,15 +57,10 @@
 
             <div class="visual">
                 <div class="orb"></div>
-                <div class="glass fbadge"><svg class="ic">
-                        <use href="#i-shield" />
-                    </svg> Posting checked · Real</div>
-                <div class="glass fcard one">
+                <div class="glass fbadge"><svg class="ic"><use href="#i-shield"/></svg> Posting checked · Real</div>                <div class="glass fcard one">
                     <div class="ftop">
                         <div class="avatar blush">N</div>
-                        <div>
-                            <h3>Product Designer</h3><small>Northstar · Remote</small>
-                        </div>
+                        <div><h3>Product Designer</h3><small>Northstar · Remote</small></div>
                     </div>
                     <div class="fscore">
                         <div class="ring" style="--p:98"><b>98</b></div>
@@ -119,9 +70,7 @@
                 <div class="glass fcard two">
                     <div class="ftop">
                         <div class="avatar mint">W</div>
-                        <div>
-                            <h3>IoT Engineer</h3><small>Wave Systems</small>
-                        </div>
+                        <div><h3>IoT Engineer</h3><small>Wave Systems</small></div>
                     </div>
                     <div class="fscore">
                         <div class="ring warm" style="--p:78"><b>78</b></div>
@@ -138,121 +87,79 @@
                     <div class="eyebrow">Curated for you</div>
                     <h2>Possibilities worth <em>exploring.</em></h2>
                 </div>
-                <a href="jobs.html" class="pill-link">View all roles <svg class="ic">
-                        <use href="#i-arrow" />
-                    </svg></a>
+                <a href="{{ url('/jobs') }}" class="pill-link">View all roles <svg class="ic"><use href="#i-arrow"/></svg></a>
             </div>
 
             <div class="jobs">
                 <article class="job reveal">
                     <div class="job-top">
                         <div class="avatar blush">N</div>
-                        <button class="like" aria-label="Save job"><svg class="ic">
-                                <use href="#i-heart" />
-                            </svg></button>
+                        <button class="like" aria-label="Save job"><svg class="ic"><use href="#i-heart"/></svg></button>
                     </div>
-                    <div class="match"><svg class="ic spark">
-                            <use href="#i-spark" />
-                        </svg> 98% match</div>
+                    <div class="match"><svg class="ic spark"><use href="#i-spark"/></svg> 98% match</div>
                     <h3>Product Designer</h3>
                     <div class="company">Northstar</div>
                     <div class="meta">
-                        <span><svg class="ic">
-                                <use href="#i-pin" />
-                            </svg> Remote · Asia</span>
-                        <span><svg class="ic">
-                                <use href="#i-clock" />
-                            </svg> Full-time</span>
+                        <span><svg class="ic"><use href="#i-pin"/></svg> Remote · Asia</span>
+                        <span><svg class="ic"><use href="#i-clock"/></svg> Full-time</span>
                     </div>
                     <div class="job-foot">
                         <div class="tags"><span>Figma</span><span>UX Research</span><span>Prototyping</span></div>
-                        <a href="jobs.html" class="apply">Apply <svg class="ic">
-                                <use href="#i-arrow" />
-                            </svg></a>
+                        <a href="{{ url('/jobs') }}" class="apply">Apply <svg class="ic"><use href="#i-arrow"/></svg></a>
                     </div>
                 </article>
 
                 <article class="job reveal">
                     <div class="job-top">
                         <div class="avatar sage">R</div>
-                        <button class="like" aria-label="Save job"><svg class="ic">
-                                <use href="#i-heart" />
-                            </svg></button>
+                        <button class="like" aria-label="Save job"><svg class="ic"><use href="#i-heart"/></svg></button>
                     </div>
-                    <div class="match"><svg class="ic spark">
-                            <use href="#i-spark" />
-                        </svg> 94% match</div>
+                    <div class="match"><svg class="ic spark"><use href="#i-spark"/></svg> 94% match</div>
                     <h3>Senior Frontend Engineer</h3>
                     <div class="company">Rivet Labs</div>
                     <div class="meta">
-                        <span><svg class="ic">
-                                <use href="#i-pin" />
-                            </svg> Remote · Hybrid</span>
-                        <span><svg class="ic">
-                                <use href="#i-clock" />
-                            </svg> Full-time</span>
+                        <span><svg class="ic"><use href="#i-pin"/></svg> Remote · Hybrid</span>
+                        <span><svg class="ic"><use href="#i-clock"/></svg> Full-time</span>
                     </div>
                     <div class="job-foot">
                         <div class="tags"><span>JavaScript</span><span>CSS</span><span>React</span></div>
-                        <a href="jobs.html" class="apply">Apply <svg class="ic">
-                                <use href="#i-arrow" />
-                            </svg></a>
+                        <a href="{{ url('/jobs') }}" class="apply">Apply <svg class="ic"><use href="#i-arrow"/></svg></a>
                     </div>
                 </article>
 
                 <article class="job reveal">
                     <div class="job-top">
                         <div class="avatar sand">L</div>
-                        <button class="like" aria-label="Save job"><svg class="ic">
-                                <use href="#i-heart" />
-                            </svg></button>
+                        <button class="like" aria-label="Save job"><svg class="ic"><use href="#i-heart"/></svg></button>
                     </div>
-                    <div class="match"><svg class="ic spark">
-                            <use href="#i-spark" />
-                        </svg> 91% match</div>
+                    <div class="match"><svg class="ic spark"><use href="#i-spark"/></svg> 91% match</div>
                     <h3>Junior Laravel Developer</h3>
                     <div class="company">Lumen Works</div>
                     <div class="meta">
-                        <span><svg class="ic">
-                                <use href="#i-pin" />
-                            </svg> Hybrid</span>
-                        <span><svg class="ic">
-                                <use href="#i-clock" />
-                            </svg> Full-time</span>
+                        <span><svg class="ic"><use href="#i-pin"/></svg> Hybrid</span>
+                        <span><svg class="ic"><use href="#i-clock"/></svg> Full-time</span>
                     </div>
                     <div class="job-foot">
                         <div class="tags"><span>Laravel</span><span>MySQL</span><span>REST</span></div>
-                        <a href="jobs.html" class="apply">Apply <svg class="ic">
-                                <use href="#i-arrow" />
-                            </svg></a>
+                        <a href="{{ url('/jobs') }}" class="apply">Apply <svg class="ic"><use href="#i-arrow"/></svg></a>
                     </div>
                 </article>
 
                 <article class="job reveal">
                     <div class="job-top">
                         <div class="avatar mint">W</div>
-                        <button class="like" aria-label="Save job"><svg class="ic">
-                                <use href="#i-heart" />
-                            </svg></button>
+                        <button class="like" aria-label="Save job"><svg class="ic"><use href="#i-heart"/></svg></button>
                     </div>
-                    <div class="match"><svg class="ic spark">
-                            <use href="#i-spark" />
-                        </svg> 87% match</div>
+                    <div class="match"><svg class="ic spark"><use href="#i-spark"/></svg> 87% match</div>
                     <h3>IoT Engineer</h3>
                     <div class="company">Wave Systems</div>
                     <div class="meta">
-                        <span><svg class="ic">
-                                <use href="#i-pin" />
-                            </svg> Remote</span>
-                        <span><svg class="ic">
-                                <use href="#i-clock" />
-                            </svg> Contract</span>
+                        <span><svg class="ic"><use href="#i-pin"/></svg> Remote</span>
+                        <span><svg class="ic"><use href="#i-clock"/></svg> Contract</span>
                     </div>
                     <div class="job-foot">
                         <div class="tags"><span>ESP32</span><span>MQTT</span><span>C++</span></div>
-                        <a href="jobs.html" class="apply">Apply <svg class="ic">
-                                <use href="#i-arrow" />
-                            </svg></a>
+                        <a href="{{ url('/jobs') }}" class="apply">Apply <svg class="ic"><use href="#i-arrow"/></svg></a>
                     </div>
                 </article>
             </div>
@@ -265,38 +172,13 @@
                     <div class="eyebrow">Follow your curiosity</div>
                     <h2>Find your <em>corner.</em></h2>
                 </div>
-                <p>From first spark to next big thing, explore the spaces where thoughtful people are making an impact.
-                </p>
+                <p>From first spark to next big thing, explore the spaces where thoughtful people are making an impact.</p>
             </div>
             <div class="cats">
-                <a href="jobs.html?c=design" class="cat mint reveal">
-                    <div><small>01</small>
-                        <h3>Design &amp; Creative</h3>
-                    </div><svg class="ic arrow">
-                        <use href="#i-arrow" />
-                    </svg>
-                </a>
-                <a href="jobs.html?c=tech" class="cat sand reveal">
-                    <div><small>02</small>
-                        <h3>Technology</h3>
-                    </div><svg class="ic arrow">
-                        <use href="#i-arrow" />
-                    </svg>
-                </a>
-                <a href="jobs.html?c=climate" class="cat sage reveal">
-                    <div><small>03</small>
-                        <h3>Climate &amp; Impact</h3>
-                    </div><svg class="ic arrow">
-                        <use href="#i-arrow" />
-                    </svg>
-                </a>
-                <a href="jobs.html?c=business" class="cat blush reveal">
-                    <div><small>04</small>
-                        <h3>Business &amp; Strategy</h3>
-                    </div><svg class="ic arrow">
-                        <use href="#i-arrow" />
-                    </svg>
-                </a>
+                <a href="{{ url('/jobs') }}?c=design" class="cat mint reveal"><div><small>01</small><h3>Design &amp; Creative</h3></div><svg class="ic arrow"><use href="#i-arrow"/></svg></a>
+                <a href="{{ url('/jobs') }}?c=tech" class="cat sand reveal"><div><small>02</small><h3>Technology</h3></div><svg class="ic arrow"><use href="#i-arrow"/></svg></a>
+                <a href="{{ url('/jobs') }}?c=climate" class="cat sage reveal"><div><small>03</small><h3>Climate &amp; Impact</h3></div><svg class="ic arrow"><use href="#i-arrow"/></svg></a>
+                <a href="{{ url('/jobs') }}?c=business" class="cat blush reveal"><div><small>04</small><h3>Business &amp; Strategy</h3></div><svg class="ic arrow"><use href="#i-arrow"/></svg></a>
             </div>
         </section>
 
@@ -338,8 +220,7 @@
                 <div style="position:relative;z-index:1">
                     <div class="eyebrow" style="color:#fff"><span style="opacity:.9">Trust &amp; safety</span></div>
                     <h2 style="margin-top:20px">Real jobs <em>only.</em></h2>
-                    <p>Every posting passes through our fake-job detector, so your time goes to real opportunities and
-                        you stay safe from scams.</p>
+                    <p>Every posting passes through our fake-job detector, so your time goes to real opportunities and you stay safe from scams.</p>
                 </div>
                 <div class="verdicts">
                     <div class="verdict">Senior Designer · Atlas Co. <span class="ok">✔ Real</span></div>
@@ -355,10 +236,8 @@
                 <h2>Ready to meet your <em>best match?</em></h2>
                 <p>Join in a minute. Your CV, profile and first recommendations are on us.</p>
                 <div class="cta-row">
-                    <a href="register.html" class="btn primary">Create free account <svg class="ic">
-                            <use href="#i-arrow" />
-                        </svg></a>
-                    <a href="register-recruiter.html" class="btn coral">Post a job</a>
+                    <a href="{{ url('/register') }}" class="btn primary">Create free account <svg class="ic"><use href="#i-arrow"/></svg></a>
+                    <a href="{{ route('recruiter.register') }}" class="btn coral">Post a job</a>
                 </div>
             </div>
         </section>
@@ -372,34 +251,28 @@
     </footer>
 
     <!-- CHATBOT -->
-    <button id="chat-toggle" aria-label="Open chat"><svg class="ic">
-            <use href="#i-chat" />
-        </svg></button>
+    <button id="chat-toggle" aria-label="Open chat"><svg class="ic"><use href="#i-chat"/></svg></button>
     <div id="chat-box" class="glass">
-        <div class="chat-head"><strong>JobSphere Assistant</strong><small>Ask about applying, CVs, scores...</small>
-        </div>
-        <div id="chat-log">
-            <div class="msg bot">Hi! 👋 How can I help you today?</div>
-        </div>
+        <div class="chat-head"><strong>JobSphere Assistant</strong><small>Ask about applying, CVs, scores...</small></div>
+        <div id="chat-log"><div class="msg bot">Hi! 👋 How can I help you today?</div></div>
         <form id="chat-form">
             <input id="chat-input" placeholder="Type a question..." autocomplete="off" maxlength="300">
             <button type="submit">Send</button>
         </form>
     </div>
+@endsection
 
-    <script>
+@push('scripts')
+<script>
+@verbatim
         document.getElementById('year').textContent = new Date().getFullYear();
 
         // seeker / hirer switch
         const modes = {
-            seeker: {
-                lead: 'A more considered way to find your next chapter: thoughtfully matched roles, ambitious teams, and a path that makes sense.',
-                cta: 'Create my profile', href: 'register.html', note: 'Your CV is generated for you.'
-            },
-            hirer: {
-                lead: 'Meet candidates who genuinely fit. Verified company, ranked applicants, and no fake-posting noise.',
-                cta: 'Post a job', href: 'register-recruiter.html', note: 'Verified recruiters only.'
-            }
+            seeker: { lead: 'A more considered way to find your next chapter: thoughtfully matched roles, ambitious teams, and a path that makes sense.',
+                      cta: 'Create my profile', href: '/register', note: 'Your CV is generated for you.' },
+            hirer:  { lead: 'Meet candidates who genuinely fit. Verified company, ranked applicants, and no fake-posting noise.',
+                      cta: 'Post a job', href: '/recruiter/register', note: 'Verified recruiters only.' }
         };
         document.querySelectorAll('.switch button').forEach(btn => btn.addEventListener('click', () => {
             document.querySelectorAll('.switch button').forEach(b => b.classList.remove('on'));
@@ -455,7 +328,7 @@
             try {
                 const res = await fetch('/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
                     body: JSON.stringify({ message })
                 });
                 if (!res.ok) throw new Error('no backend');
@@ -465,7 +338,7 @@
                 add(localReply(message), 'bot');
             }
         });
-    </script>
-</body>
-
-</html>
+    
+@endverbatim
+</script>
+@endpush

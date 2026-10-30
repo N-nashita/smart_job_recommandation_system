@@ -25,7 +25,7 @@ class RecruiterAuthController extends Controller
         return response()->json(['name' => $recruiter->name, 'status' => $recruiter->verification_status]);
     }
 
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request)
     {
         Auth::guard('recruiter')->logout();
         $request->session()->invalidate();

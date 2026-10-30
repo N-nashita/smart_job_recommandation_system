@@ -1,0 +1,547 @@
+/* Shared components for the recruiter inner pages (Applicants, My jobs, Interviews). Loads after dashboard.css */
+.page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.page-head h1 {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+}
+.page-head p {
+    color: var(--muted);
+    margin-top: 4px;
+}
+.page-head .acts {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.tools {
+    padding: 16px 18px;
+    display: grid;
+    gap: 14px;
+}
+.tools .row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.tools .search {
+    min-width: 220px;
+}
+.sel {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.8)
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%230f5c4d' stroke-width='2'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E")
+        no-repeat right 14px center;
+    border-radius: 999px;
+    padding: 10px 36px 10px 16px;
+    font: inherit;
+    font-size: 0.88rem;
+    color: var(--ink);
+    cursor: pointer;
+}
+.chk {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    color: var(--ink);
+}
+.chk input {
+    accent-color: #0f6652;
+    width: 16px;
+    height: 16px;
+}
+.tabs button small {
+    margin-left: 5px;
+    font-size: 0.72rem;
+    opacity: 0.7;
+}
+.tabs {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 22px;
+    align-items: start;
+}
+.stack {
+    display: grid;
+    gap: 22px;
+}
+.cand.is-sel {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(31, 158, 137, 0.18);
+}
+.cand {
+    cursor: pointer;
+}
+.stage {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.7rem;
+    border-radius: 999px;
+    padding: 2px 10px;
+    background: var(--sand);
+    color: #8a6a3f;
+}
+.stage.short {
+    background: var(--mint);
+    color: var(--accent-deep);
+}
+.stage.interview {
+    background: #dcebf3;
+    color: #26607f;
+}
+.stage.offer {
+    background: #e5f3d6;
+    color: #3d6b1d;
+}
+.stage.rejected {
+    background: #f4dcdc;
+    color: #9a3d3d;
+}
+.cand .meta2 {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-top: 6px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+/* candidate preview */
+.prev {
+    padding: 26px;
+    position: sticky;
+    top: 18px;
+}
+.prev .ph {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+.prev .ph .avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 1.2rem;
+    border-radius: 18px;
+}
+.prev h3 {
+    font-size: 1.2rem;
+}
+.prev .rl {
+    color: var(--muted);
+    font-size: 0.86rem;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+.prev .ring {
+    margin-left: auto;
+    width: 62px;
+    height: 62px;
+}
+.prev p.sum {
+    margin: 18px 0 14px;
+    font-size: 0.92rem;
+    color: #2c4a43;
+}
+.bd {
+    display: grid;
+    gap: 10px;
+    margin: 16px 0;
+}
+.bd div {
+    display: grid;
+    grid-template-columns: 78px 1fr 34px;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+}
+.bd i {
+    display: block;
+    height: 7px;
+    border-radius: 99px;
+    background: var(--mint);
+    overflow: hidden;
+}
+.bd i::after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: var(--v);
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+}
+.bd b {
+    color: var(--ink);
+    font-weight: 600;
+    text-align: right;
+}
+.prev .skills {
+    margin: 0 0 18px;
+}
+.prev .acts2 {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.prev .acts2 .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+}
+.prev .lnk {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    font-size: 0.84rem;
+    color: var(--accent-deep);
+    flex-wrap: wrap;
+}
+.prev .lnk a,
+.prev .lnk button {
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.btn.danger {
+    background: transparent;
+    color: #9a3d3d;
+    border-color: rgba(154, 61, 61, 0.35);
+}
+.btn.danger:hover {
+    background: #f9e9e9;
+}
+
+/* pipeline board */
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+.board .lane {
+    min-height: 220px;
+    padding: 12px;
+}
+.board .pc {
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.board .pc.is-sel {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(31, 158, 137, 0.18);
+}
+.board .pc div.t {
+    min-width: 0;
+}
+.board .pc strong {
+    display: block;
+    font-family: var(--head);
+    font-size: 0.84rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.board .pc small {
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+.board .pc button {
+    border: 0;
+    background: var(--mint);
+    color: var(--accent-deep);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+.board .pc button:hover {
+    background: var(--accent-deep);
+    color: #fff;
+}
+.lane .none {
+    color: var(--muted);
+    font-size: 0.78rem;
+    padding: 14px 4px;
+    text-align: center;
+}
+
+@media (max-width: 1180px) {
+    .split {
+        grid-template-columns: 1fr;
+    }
+    .prev {
+        position: static;
+    }
+}
+@media (max-width: 920px) {
+    .board {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 560px) {
+    .board {
+        grid-template-columns: 1fr;
+    }
+    .bd div {
+        grid-template-columns: 64px 1fr 32px;
+    }
+}
+
+/* pipeline view: board gets the full width, preview + activity sit below it side by side */
+.split.wide {
+    grid-template-columns: 1fr;
+}
+.split.wide > .stack:last-child {
+    grid-template-columns: minmax(0, 680px);
+    align-items: start;
+}
+.split.wide .prev {
+    position: static;
+}
+
+/* My jobs */
+.jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+}
+.job-card {
+    padding: 24px;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    transition:
+        transform 0.25s,
+        box-shadow 0.25s;
+}
+.job-card:hover {
+    transform: translateY(-3px);
+}
+.job-card .jt {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+}
+.job-card h3 {
+    font-size: 1.08rem;
+}
+.job-card .jm {
+    color: var(--muted);
+    font-size: 0.86rem;
+    margin-top: -4px;
+}
+.job-card .meter {
+    height: 7px;
+    border-radius: 99px;
+    background: var(--mint);
+    overflow: hidden;
+}
+.job-card .meter i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+}
+.job-card .jf {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.84rem;
+    color: var(--muted);
+}
+.job-card .jf b {
+    color: var(--ink);
+}
+.jchk {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--accent-deep);
+    background: var(--mint);
+    border-radius: 999px;
+    padding: 4px 12px;
+    width: fit-content;
+}
+.jchk .ic {
+    color: var(--accent);
+}
+.jact {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+.st.closed {
+    background: #eceeee;
+    color: #5c6b68;
+}
+.jform {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 18px;
+}
+.jform .wide {
+    grid-column: 1 / -1;
+}
+.jform .f {
+    display: grid;
+    gap: 6px;
+}
+.jform label {
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+.jform input,
+.jform textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 11px 14px;
+    font: inherit;
+    font-size: 0.94rem;
+    color: var(--ink);
+    outline: none;
+}
+.jform input:focus,
+.jform textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(31, 158, 137, 0.15);
+}
+.jform .two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.jform .msg-err {
+    color: #a24b3a;
+    font-size: 0.8rem;
+    min-height: 0;
+}
+.jform .f.err input,
+.jform .f.err textarea {
+    border-color: var(--coral);
+}
+.verdict {
+    border-radius: 18px;
+    padding: 16px 20px;
+    font-size: 0.92rem;
+}
+.verdict.pass {
+    background: var(--mint);
+    color: var(--accent-deep);
+}
+.verdict.fail {
+    background: var(--blush);
+    color: #8a4630;
+}
+.verdict ul {
+    list-style: none;
+    margin-top: 8px;
+    display: grid;
+    gap: 4px;
+}
+.verdict li.bad {
+    font-weight: 600;
+}
+@media (max-width: 640px) {
+    .jform {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Interviews */
+.dayh {
+    font-family: var(--head);
+    font-size: 0.9rem;
+    color: var(--accent-deep);
+    margin: 18px 0 10px;
+}
+.dayh:first-child {
+    margin-top: 0;
+}
+.ivl {
+    margin-bottom: 4px;
+}
+.ivl .evh {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.ivl .evh > div:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+}
+.ivl .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+.evact {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.ivl .ev {
+    padding: 14px 16px;
+}
+.ivl .tl::before,
+.tl.ivl::before {
+    left: 49px;
+}
+
+.main {
+    grid-template-columns: minmax(0, 1fr);
+}
+.tools .row > * {
+    max-width: 100%;
+}
+.tools {
+    grid-template-columns: minmax(0, 1fr);
+}
+.tools .tabs {
+    min-width: 0;
+}
+
+/* fixes */
+.prev {
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
+}
+.ring {
+    flex: none;
+    aspect-ratio: 1 / 1;
+}
+.prev .ph > div:nth-child(2) {
+    min-width: 0;
+}
