@@ -319,14 +319,229 @@
     grid-template-columns: 1fr;
 }
 .split.wide > .stack:last-child {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 680px);
     align-items: start;
 }
 .split.wide .prev {
     position: static;
 }
-@media (max-width: 900px) {
-    .split.wide > .stack:last-child {
+
+/* My jobs */
+.jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+}
+.job-card {
+    padding: 24px;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    transition:
+        transform 0.25s,
+        box-shadow 0.25s;
+}
+.job-card:hover {
+    transform: translateY(-3px);
+}
+.job-card .jt {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+}
+.job-card h3 {
+    font-size: 1.08rem;
+}
+.job-card .jm {
+    color: var(--muted);
+    font-size: 0.86rem;
+    margin-top: -4px;
+}
+.job-card .meter {
+    height: 7px;
+    border-radius: 99px;
+    background: var(--mint);
+    overflow: hidden;
+}
+.job-card .meter i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+}
+.job-card .jf {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.84rem;
+    color: var(--muted);
+}
+.job-card .jf b {
+    color: var(--ink);
+}
+.jchk {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--accent-deep);
+    background: var(--mint);
+    border-radius: 999px;
+    padding: 4px 12px;
+    width: fit-content;
+}
+.jchk .ic {
+    color: var(--accent);
+}
+.jact {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+.st.closed {
+    background: #eceeee;
+    color: #5c6b68;
+}
+.jform {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 18px;
+}
+.jform .wide {
+    grid-column: 1 / -1;
+}
+.jform .f {
+    display: grid;
+    gap: 6px;
+}
+.jform label {
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+.jform input,
+.jform textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 11px 14px;
+    font: inherit;
+    font-size: 0.94rem;
+    color: var(--ink);
+    outline: none;
+}
+.jform input:focus,
+.jform textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(31, 158, 137, 0.15);
+}
+.jform .two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.jform .msg-err {
+    color: #a24b3a;
+    font-size: 0.8rem;
+    min-height: 0;
+}
+.jform .f.err input,
+.jform .f.err textarea {
+    border-color: var(--coral);
+}
+.verdict {
+    border-radius: 18px;
+    padding: 16px 20px;
+    font-size: 0.92rem;
+}
+.verdict.pass {
+    background: var(--mint);
+    color: var(--accent-deep);
+}
+.verdict.fail {
+    background: var(--blush);
+    color: #8a4630;
+}
+.verdict ul {
+    list-style: none;
+    margin-top: 8px;
+    display: grid;
+    gap: 4px;
+}
+.verdict li.bad {
+    font-weight: 600;
+}
+@media (max-width: 640px) {
+    .jform {
         grid-template-columns: 1fr;
     }
+}
+
+/* Interviews */
+.dayh {
+    font-family: var(--head);
+    font-size: 0.9rem;
+    color: var(--accent-deep);
+    margin: 18px 0 10px;
+}
+.dayh:first-child {
+    margin-top: 0;
+}
+.ivl {
+    margin-bottom: 4px;
+}
+.ivl .evh {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.ivl .evh > div:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+}
+.ivl .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+.evact {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.ivl .ev {
+    padding: 14px 16px;
+}
+.ivl .tl::before,
+.tl.ivl::before {
+    left: 49px;
+}
+
+.main {
+    grid-template-columns: minmax(0, 1fr);
+}
+.tools .row > * {
+    max-width: 100%;
+}
+.tools {
+    grid-template-columns: minmax(0, 1fr);
+}
+.tools .tabs {
+    min-width: 0;
+}
+
+/* fixes */
+.prev {
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
+}
+.ring {
+    flex: none;
+    aspect-ratio: 1 / 1;
+}
+.prev .ph > div:nth-child(2) {
+    min-width: 0;
 }
