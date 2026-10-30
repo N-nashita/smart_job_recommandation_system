@@ -38,12 +38,16 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
 
+    'recruiter' => [
+        'driver' => 'session',
+        'provider' => 'recruiters',
+    ],
+],
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -62,16 +66,16 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
     ],
+
+    'recruiters' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Recruiter::class,
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
