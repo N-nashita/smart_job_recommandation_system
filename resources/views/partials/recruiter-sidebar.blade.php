@@ -1,11 +1,13 @@
 @php
     $r = auth('recruiter')->user();
     $status = $r->verification_status;
+    $newApps = $status === 'verified' ? \App\Models\Application::whereHas('job', fn ($q) => $q->where('recruiter_id', $r->id))->where('status', 'new')->count() : 0;
     $nav = [
         ['recruiter.dashboard',  'Overview',   'i-home'],
         ['recruiter.applicants', 'Applicants', 'i-users'],
         ['recruiter.jobs',       'My jobs',    'i-brief'],
         ['recruiter.interviews', 'Interviews', 'i-cal'],
+        ['recruiter.verification', 'Verification', 'i-shield'],
     ];
 @endphp
 <aside class="side glass" aria-label="Main menu">
@@ -14,7 +16,8 @@
     @foreach ($nav as [$route, $label, $icon])
         <a class="nv {{ request()->routeIs($route) ? 'on' : '' }}" href="{{ route($route) }}">
             <svg class="ic"><use href="#{{ $icon }}"/></svg><span>{{ $label }}</span>
-            @if ($route === 'recruiter.applicants')<em>24</em>@endif
+            @if ($route === 'recruiter.applicants' && ($newApps ?? 0) > 0)<em>{{ $newApps }}</em>@endif
+            @if ($route === 'recruiter.verification' && $status !== 'verified')<em class="dot-warn">!</em>@endif
         </a>
     @endforeach
 

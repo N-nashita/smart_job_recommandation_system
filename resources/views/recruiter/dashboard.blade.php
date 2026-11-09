@@ -8,28 +8,26 @@
     $first = explode(' ', trim($r->name))[0];
     $hour = (int) now()->setTimezone('Asia/Dhaka')->format('G');
     $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
-
-    // MOCK DATA: replace with real queries later
-    $matches = [
-        ['n' => 'Rafi Ahmed',  'i' => 'RA', 'av' => 'sage',  'role' => 'Backend Engineer · 3 yrs', 'm' => 94, 'up' => true,  'sk' => ['Laravel', 'MySQL', 'REST APIs']],
-        ['n' => 'Sadia Islam', 'i' => 'SI', 'av' => 'blush', 'role' => 'Backend Engineer · 2 yrs', 'm' => 91, 'up' => true,  'sk' => ['PHP', 'AWS', 'Docker']],
-        ['n' => 'Imran Hossain', 'i' => 'IH', 'av' => 'mint', 'role' => 'Frontend Developer · 3 yrs', 'm' => 90, 'up' => true, 'sk' => ['React', 'TypeScript']],
-    ];
-    $today = [
-        ['t' => '10:00', 'n' => 'Nabil Hasan',   'd' => 'Technical round · Meet', 'now' => true],
-        ['t' => '14:30', 'n' => 'Mim Chowdhury', 'd' => 'HR intro · Phone',      'now' => false],
-    ];
+    $colors = ['sage', 'blush', 'mint', 'sand'];
+    $hasFocus = $auto->count() + $tasks->count() > 0;
+    $doneN = $tasks->where('done', true)->count();
 @endphp
 
 <section class="welcome">
     <div class="hello reveal">
         <div class="eyebrow">Recruiter workspace</div>
         <h1>{{ $greeting }}, <em>{{ $first }}.</em></h1>
-        <p>9 candidates updated their profiles since yesterday. Two of them now match your Backend role above 90%.</p>
+        @if (! $verified)
+            <p>Your workspace fills up once your company is verified.</p>
+        @elseif ($stats['new'] + $stats['interviews'] + $stats['open'] === 0)
+            <p>Nothing yet. Post your first job and candidates will start showing up here.</p>
+        @else
+            <p>{{ $stats['new'] }} new {{ $stats['new'] === 1 ? 'applicant is' : 'applicants are' }} waiting and {{ $stats['interviews'] }} {{ $stats['interviews'] === 1 ? 'interview is' : 'interviews are' }} scheduled today.</p>
+        @endif
         <div class="chips">
-            <div class="chip"><b>24</b><span>New applicants</span></div>
-            <div class="chip"><b>5</b><span>Interviews</span></div>
-            <div class="chip"><b>9</b><span>Profile updates</span></div>
+            <div class="chip"><b>{{ $stats['new'] }}</b><span>New applicants</span></div>
+            <div class="chip"><b>{{ $stats['interviews'] }}</b><span>Interviews today</span></div>
+            <div class="chip"><b>{{ $stats['open'] }}</b><span>Open jobs</span></div>
         </div>
         <div class="quick">
             <a href="{{ route('recruiter.applicants') }}" class="btn light sm">Review applicants</a>
@@ -38,14 +36,34 @@
     </div>
 
     <div class="glass focus reveal">
-        <h3>Today's focus <span class="ai">Suggested</span></h3>
-        <p class="sub">Picked from candidate activity and your open roles.</p>
+        <h3>Today's focus @if ($auto->count())<span class="ai">Suggested</span>@endif</h3>
+        <p class="sub">Suggestions come from your live data. Add your own tasks below.</p>
         <div class="bar"><i id="bar"></i></div>
-        <ul class="tasks" id="tasks">
-            <li><label><input type="checkbox"><span>Review 3 strong new matches<small>Backend Engineer · 85%+ compatibility</small></span></label></li>
-            <li><label><input type="checkbox"><span>Call Rafi Ahmed for interview<small>Updated his portfolio 2 hours ago</small></span></label></li>
-            <li><label><input type="checkbox"><span>Publish the UI Designer draft<small>Posting passed the authenticity check</small></span></label></li>
+
+        @if (! $hasFocus)
+            <p class="sub" style="margin-top:14px">{{ $verified ? 'No tasks for today.' : 'Available after verification.' }}</p>
+        @endif
+
+        <ul class="tasks">
+            @foreach ($auto as $a)
+                <li><a href="{{ $a['url'] }}" class="auto-item"><span>{{ $a['title'] }}<small>{{ $a['note'] }}</small></span><b>→</b></a></li>
+            @endforeach
         </ul>
+        <ul class="tasks" id="tasks">
+            @foreach ($tasks as $t)
+                <li><label><input type="checkbox" data-id="{{ $t->id }}" @if ($t->done) checked @endif>
+                    <span>{{ $t->title }}@if ($t->note)<small>{{ $t->note }}</small>@endif</span></label>
+                    <form method="POST" action="{{ route('recruiter.tasks.destroy', $t->id) }}" class="x">@csrf @method('DELETE')<button title="Remove">×</button></form></li>
+            @endforeach
+        </ul>
+
+        @if ($verified)
+            <form method="POST" action="{{ route('recruiter.tasks.store') }}" class="addtask">
+                @csrf
+                <input name="title" placeholder="Add a task for today" maxlength="140" required>
+                <button class="btn light sm" type="submit">Add</button>
+            </form>
+        @endif
     </div>
 </section>
 
@@ -56,17 +74,20 @@
             <a href="{{ route('recruiter.applicants') }}" class="btn ghost sm">View all</a>
         </div>
         <div class="cands">
-            @foreach ($matches as $m)
+            @forelse ($matches as $m)
+                @php($c = $m->candidate)
+                @php($ini = collect(explode(' ', trim($c->name)))->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->take(2)->implode(''))
                 <a class="cand" href="{{ route('recruiter.applicants') }}">
-                    <div class="avatar {{ $m['av'] }}">{{ $m['i'] }}</div>
+                    <div class="avatar {{ $colors[$c->id % 4] }}">{{ $ini }}</div>
                     <div>
-                        <div class="nm">{{ $m['n'] }} @if ($m['up'])<span class="tag">Updated profile</span>@endif</div>
-                        <div class="rl">{{ $m['role'] }}</div>
-                        <div class="skills">@foreach ($m['sk'] as $s)<span>{{ $s }}</span>@endforeach</div>
+                        <div class="nm">{{ $c->name }}</div>
+                        <div class="rl">Applied for {{ $m->job->title }}</div>
                     </div>
-                    <div class="right"><div class="ring" style="--p:{{ $m['m'] }}"><b>{{ $m['m'] }}</b></div>match</div>
+                    <div class="right"><div class="ring" style="--p:{{ $m->match_score }}"><b>{{ $m->match_score }}</b></div>match</div>
                 </a>
-            @endforeach
+            @empty
+                <p class="sub empty-note">{{ $verified ? 'No applicants yet.' : 'Nothing to show until your company is verified.' }}</p>
+            @endforelse
         </div>
     </div>
 
@@ -76,10 +97,12 @@
             <a href="{{ route('recruiter.interviews') }}" class="btn ghost sm">Schedule</a>
         </div>
         <ul class="tl">
-            @foreach ($today as $e)
-                <li class="{{ $e['now'] ? 'now' : '' }}"><time>{{ $e['t'] }}</time><span class="dot"></span>
-                    <div class="ev"><b>{{ $e['n'] }}</b><small>{{ $e['d'] }}</small></div></li>
-            @endforeach
+            @forelse ($interviews as $e)
+                <li><time>{{ $e->scheduled_at->setTimezone('Asia/Dhaka')->format('H:i') }}</time><span class="dot"></span>
+                    <div class="ev"><b>{{ $e->application->candidate->name }}</b><small>{{ trim(($e->round ?? '').' · '.($e->mode ?? ''), ' ·') }}</small></div></li>
+            @empty
+                <li class="empty-note sub">No interviews today.</li>
+            @endforelse
         </ul>
     </div>
 </section>
@@ -89,9 +112,16 @@
 <script>
 @verbatim
 (() => {
-    const boxes = [...document.querySelectorAll('#tasks input')];
-    const prog = () => { document.getElementById('bar').style.width = Math.round(boxes.filter(b => b.checked).length / boxes.length * 100) + '%'; };
-    boxes.forEach(b => b.addEventListener('change', prog)); prog();
+    const boxes = [...document.querySelectorAll('#tasks input[type=checkbox]')];
+    const bar = document.getElementById('bar');
+    const prog = () => { bar.style.width = boxes.length ? Math.round(boxes.filter(b => b.checked).length / boxes.length * 100) + '%' : '0%'; };
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+    boxes.forEach(b => b.addEventListener('change', () => {
+        prog();
+        fetch('/recruiter/tasks/' + b.dataset.id + '/toggle', { method: 'POST', headers: { 'X-CSRF-TOKEN': token } })
+            .catch(() => { b.checked = !b.checked; prog(); });
+    }));
+    prog();
 })();
 @endverbatim
 </script>

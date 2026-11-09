@@ -15,7 +15,7 @@
         <section class="glass tools">
             <div class="row">
                 <label class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Search by name, skill or city" aria-label="Search applicants"></label>
-                <select class="sel" id="job" aria-label="Role"><option value="">All roles</option><option>Backend Engineer</option><option>Frontend Developer</option><option>UI Designer</option></select>
+                <select class="sel" id="job" aria-label="Role"><option value="">All roles</option>@foreach ($titles as $t)<option>{{ $t }}</option>@endforeach</select>
                 <select class="sel" id="min" aria-label="Minimum match"><option value="0">Any match</option><option value="90">90% and above</option><option value="80">80% and above</option></select>
                 <select class="sel" id="sort" aria-label="Sort"><option value="match">Best match</option><option value="new">Newest first</option><option value="upd">Recently updated</option></select>
             </div>
@@ -43,6 +43,7 @@
     <div class="sheet">
         <h3 id="mt">Call for interview</h3>
         <p id="mp"></p>
+        <label class="dtl">Date <input type="date" id="idate"></label>
         <div class="slots" id="slots"></div>
         <div class="row"><button class="btn ghost sm" id="cancel" type="button">Cancel</button><button class="btn primary sm" id="send" type="button">Send invitation</button></div>
     </div>
@@ -50,6 +51,7 @@
 @endsection
 
 @push('scripts')
+<script>const PEOPLE = @json($people);</script>
 <script>
 @verbatim
 (() => {
@@ -57,22 +59,12 @@
     const STAGES = [['new', 'New'], ['short', 'Shortlisted'], ['interview', 'Interview'], ['offer', 'Offer']];
     const LABEL = { new: 'New', short: 'Shortlisted', interview: 'Interview', offer: 'Offer', rejected: 'Rejected' };
 
-    // MOCK DATA: replace with fetch('/recruiter/applicants-data') once the applicants tables exist
-    const people = [
-        { id: 1, n: 'Rafi Ahmed',      job: 'Backend Engineer',   t: 'Backend Engineer · 3 yrs',     loc: 'Khulna', m: 94, sk: ['Laravel','MySQL','REST APIs','Docker'], up: 1, upT: '2 hours ago',  ago: 1, st: 'short',     bd: [96,90,100], av: 'sage',  sum: 'Built three production Laravel APIs and just added a payments project to his profile.' },
-        { id: 2, n: 'Sadia Islam',     job: 'Backend Engineer',   t: 'Backend Engineer · 2 yrs',     loc: 'Dhaka',  m: 91, sk: ['PHP','AWS','Docker'],                  up: 1, upT: '5 hours ago',  ago: 1, st: 'new',       bd: [92,88,80],  av: 'blush', sum: 'Recently completed an AWS certificate. Strong in deployment and cloud basics.' },
-        { id: 5, n: 'Imran Hossain',   job: 'Frontend Developer', t: 'Frontend Developer · 3 yrs',   loc: 'Dhaka',  m: 90, sk: ['React','TypeScript','Tailwind'],       up: 1, upT: 'Today',        ago: 0, st: 'new',       bd: [93,88,80],  av: 'mint',  sum: 'Ships polished React interfaces. Open-source contributor with an active portfolio.' },
-        { id: 3, n: 'Nabil Hasan',     job: 'Backend Engineer',   t: 'Full-stack Developer · 4 yrs', loc: 'Khulna', m: 88, sk: ['Vue','Laravel','Redis'],               up: 0, upT: '3 days ago',   ago: 3, st: 'interview', bd: [86,95,100], av: 'sand',  sum: 'Experienced full-stack developer. Accepted your interview call yesterday.' },
-        { id: 6, n: 'Mim Chowdhury',   job: 'UI Designer',        t: 'UI Designer · 2 yrs',          loc: 'Dhaka',  m: 86, sk: ['Figma','Prototyping','Design systems'],up: 0, upT: '4 days ago',   ago: 4, st: 'interview', bd: [90,80,80],  av: 'blush', sum: 'Designs clean, systematic interfaces. Strong case studies on mobile apps.' },
-        { id: 4, n: 'Tania Akter',     job: 'Frontend Developer', t: 'Frontend Developer · 1 yr',    loc: 'Khulna', m: 82, sk: ['React','CSS','Figma'],                 up: 0, upT: '1 week ago',   ago: 2, st: 'new',       bd: [84,70,100], av: 'mint',  sum: 'Early-career developer with a good eye for design and clean CSS.' },
-        { id: 8, n: 'Lamia Sultana',   job: 'UI Designer',        t: 'Graphic Designer · 2 yrs',     loc: 'Rajshahi', m: 79, sk: ['Illustrator','Figma'],               up: 1, upT: 'Yesterday',    ago: 2, st: 'short',     bd: [78,80,70],  av: 'sage',  sum: 'Strong visual designer moving into product design. Updated her portfolio yesterday.' },
-        { id: 7, n: 'Farhan Kabir',    job: 'Backend Engineer',   t: 'Backend Developer · 1 yr',     loc: 'Sylhet', m: 74, sk: ['Node.js','MongoDB'],                   up: 0, upT: '2 weeks ago',  ago: 5, st: 'rejected',  bd: [72,60,70],  av: 'sand',  sum: 'Limited experience with PHP and SQL, which your Backend role asks for.' }
-    ];
+    const people = PEOPLE;
     const slotsList = ['10:00', '11:30', '14:00', '15:30', '16:30', '17:30'];
     const f = { q: '', job: '', min: 0, sort: 'match', upd: false, stage: 'all', view: 'list' };
-    let selId = people[0].id, slot = null;
+    let selId = people[0] ? people[0].id : null, slot = null;
 
-    const ini = n => n.split(' ').map(w => w[0]).slice(0, 2).join('');
+    const ini = p => p.ini;
     const get = id => people.find(p => p.id === id);
 
     function filtered(ignoreStage) {
@@ -95,7 +87,7 @@
     function renderList(list) {
         $('#cands').innerHTML = list.length ? list.map(p => `
             <article class="cand ${p.id === selId ? 'is-sel' : ''}" data-id="${p.id}" tabindex="0">
-                <div class="avatar ${p.av}">${ini(p.n)}</div>
+                <div class="avatar ${p.av}">${ini(p)}</div>
                 <div>
                     <div class="nm">${p.n} ${p.up ? '<span class="tag">Updated profile</span>' : ''} <span class="stage ${p.st}">${LABEL[p.st]}</span></div>
                     <div class="rl">${p.t}</div>
@@ -103,14 +95,14 @@
                     <div class="meta2"><span>${p.job} · ${p.loc} · Updated ${p.upT}</span></div>
                 </div>
                 <div class="right"><div class="ring ${p.m < 85 ? 'warm' : ''}" style="--p:${p.m}"><b>${p.m}</b></div>match</div>
-            </article>`).join('') : '<div class="empty">No applicants match these filters. Try clearing a filter.</div>';
+            </article>`).join('') : `<div class="empty">${people.length ? 'No applicants match these filters. Try clearing a filter.' : 'No applicants yet. They will appear here once candidates apply to your jobs.'}</div>`;
     }
 
     function renderBoard(list) {
         $('#board').innerHTML = STAGES.map(([k, l], i) => {
             const items = list.filter(p => p.st === k);
             return `<div class="lane"><h4>${l} <b>${items.length}</b></h4>${items.map(p => `
-                <div class="pc ${p.id === selId ? 'is-sel' : ''}" data-id="${p.id}"><div class="avatar ${p.av}">${ini(p.n)}</div>
+                <div class="pc ${p.id === selId ? 'is-sel' : ''}" data-id="${p.id}"><div class="avatar ${p.av}">${ini(p)}</div>
                 <div class="t"><strong>${p.n}</strong><small>${p.job} · ${p.m}%</small></div>
                 ${i < 3 ? `<button type="button" data-next="${p.id}" aria-label="Move ${p.n} to ${STAGES[i + 1][1]}" title="Move to ${STAGES[i + 1][1]}"><svg class="ic"><use href="#i-arrow-r"/></svg></button>` : ''}</div>`).join('') || '<div class="none">Nothing here yet</div>'}</div>`;
         }).join('');
@@ -125,7 +117,7 @@
         }
         const closed = p.st === 'rejected';
         $('#prev').innerHTML = `
-            <div class="ph"><div class="avatar ${p.av}">${ini(p.n)}</div><div><h3>${p.n}</h3>
+            <div class="ph"><div class="avatar ${p.av}">${ini(p)}</div><div><h3>${p.n}</h3>
                 <div class="rl"><span>${p.t}</span><span><svg class="ic" style="vertical-align:-2px"><use href="#i-pin"/></svg> ${p.loc}</span></div></div>
                 <div class="ring ${p.m < 85 ? 'warm' : ''}" style="--p:${p.m}"><b>${p.m}</b></div></div>
             <p class="sum">${p.sum}</p>
@@ -145,11 +137,14 @@
         renderStages(); renderList(list); renderBoard(filtered(true)); renderPrev(list.length ? list : filtered(true).filter(() => false));
         const board = f.view === 'board';
         $('#split').classList.toggle('wide', board); $('#listCard').hidden = board; $('#boardCard').hidden = !board;
-        $('#sub').textContent = list.length + ' of ' + people.length + ' applicants shown';
+        $('#sub').textContent = people.length ? list.length + ' of ' + people.length + ' applicants shown' : 'No applicants yet.';
     }
 
-    function setStage(p, st, msg, icon) {
-        p.st = st; render(); window.toast(msg.replace(/<\/?b>/g, ''));
+    const STAGE_URL = id => '/recruiter/applicants/' + id + '/stage';
+    function setStage(p, st, msg) {
+        window.api(STAGE_URL(p.id), 'PATCH', { stage: st })
+            .then(() => { p.st = st; render(); window.toast(msg.replace(/<\/?b>/g, '')); })
+            .catch(err => window.toast(err.message));
     }
 
     // filters
@@ -198,6 +193,7 @@
     // interview modal
     function openCall(p) {
         selId = p.id; slot = null;
+        const d = new Date(); d.setDate(d.getDate() + 1); $('#idate').min = new Date().toISOString().slice(0, 10); $('#idate').value = d.toISOString().slice(0, 10);
         $('#mp').textContent = 'Pick a slot for ' + p.n + '. They will see it on their profile right away.';
         $('#slots').innerHTML = slotsList.map(s => `<button type="button">${s}</button>`).join('');
         $('#modal').classList.add('open');
@@ -209,8 +205,11 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
     $('#send').onclick = () => {
         if (!slot) return window.toast('Pick a time slot first');
-        const p = get(selId); close();
-        setStage(p, 'interview', `Interview set with <b>${p.n}</b> at ${slot}`, 'i-phone');
+        const date = $('#idate').value; if (!date) return window.toast('Pick a date first');
+        const p = get(selId);
+        window.api('/recruiter/applicants/' + p.id + '/interview', 'POST', { date, slot })
+            .then(() => { close(); p.st = 'interview'; render(); window.toast('Interview invitation sent to ' + p.n + ' for ' + date + ' at ' + slot); })
+            .catch(err => window.toast(err.message));
     };
 
     render();

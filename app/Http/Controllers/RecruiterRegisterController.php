@@ -34,6 +34,7 @@ class RecruiterRegisterController extends Controller
         unset($data['agree']);
 
         $recruiter = Recruiter::create($data);
+        \App\Jobs\VerifyRecruiterCompany::dispatchAfterResponse($recruiter->id);
 
         $status = $this->verifyCompany($recruiter);
         $recruiter->update([
