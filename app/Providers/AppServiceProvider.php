@@ -20,5 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        \Illuminate\Support\Facades\Gate::define('review-verifications',
+        fn ($user) => in_array($user->email, config('verification.admin_emails', [])));
     }
 }

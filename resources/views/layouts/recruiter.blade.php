@@ -9,9 +9,11 @@
 
 @section('content')
     @include('partials.sprite')
+    <script>window.RECRUITER_VERIFIED = {{ auth('recruiter')->user()->verification_status === 'verified' ? 'true' : 'false' }};</script>
     <div class="shell">
         @include('partials.recruiter-sidebar')
         <main class="main">
+            @include('partials.verification-banner')
             @yield('main')
         </main>
     </div>

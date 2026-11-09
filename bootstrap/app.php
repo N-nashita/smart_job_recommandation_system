@@ -11,16 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->validateCsrfTokens(except: [
-            'recruiter/register',
-            'recruiter/login',
-            'recruiter/logout',
-            // 'chat',   // add if you built the chatbot route
-        ]);
+        $middleware->alias(['recruiter.verified' => \App\Http\Middleware\EnsureRecruiterVerified::class]);
+        $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $request) =>
+            $request->is('recruiter/*') ? route('recruiter.login') : route('login'));
 
-        // send guests of protected recruiter pages to the login page
-        $middleware->redirectGuestsTo('/login-recruiter.html');
+        $middleware->redirectUsersTo(fn (\Illuminate\Http\Request $request) =>
+            $request->is('recruiter/*') ? route('recruiter.dashboard') : route('dashboard'));
+    
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+    

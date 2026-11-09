@@ -43,7 +43,7 @@
 
     <footer class="slim">
         <div class="wrap foot">
-            <span>{{ date('Y') }}</span> JobSphere. All rights reserved.</span>
+            <span>© {{ date('Y') }} JobSphere. All rights reserved.</span>
             <span>Privacy · Terms · Contact</span>
         </div>
     </footer>

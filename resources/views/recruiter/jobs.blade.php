@@ -1,13 +1,4 @@
 @extends('layouts.recruiter')
-@php
-    // MOCK DATA: replace with real jobs from the database
-    $jobs = [
-        ['id' => 1, 'title' => 'Backend Engineer',   'loc' => 'Khulna', 'type' => 'Full-time',  'status' => 'live',   'apps' => 18, 'strong' => 8, 'posted' => '5 days ago',    'goal' => 25, 'skills' => ['Laravel', 'MySQL', 'REST APIs']],
-        ['id' => 2, 'title' => 'Frontend Developer', 'loc' => 'Remote', 'type' => 'Full-time',  'status' => 'live',   'apps' => 6,  'strong' => 2, 'posted' => '2 days ago',    'goal' => 25, 'skills' => ['React', 'CSS', 'TypeScript']],
-        ['id' => 3, 'title' => 'UI Designer',        'loc' => 'Dhaka',  'type' => 'Contract',   'status' => 'draft',  'apps' => 0,  'strong' => 0, 'posted' => 'Not published', 'goal' => 25, 'skills' => ['Figma', 'Prototyping']],
-        ['id' => 4, 'title' => 'QA Intern',          'loc' => 'Khulna', 'type' => 'Internship', 'status' => 'closed', 'apps' => 11, 'strong' => 1, 'posted' => '6 weeks ago',   'goal' => 25, 'skills' => ['Testing', 'SQL']],
-    ];
-@endphp
 
 @section('title', 'My jobs — JobSphere')
 
@@ -44,9 +35,7 @@
 @endsection
 
 @push('scripts')
-<script>
-    const JOBS = @json($jobs);
-</script>
+<script>const JOBS = @json($jobs);</script>
 <script>
 @verbatim
 (() => {
@@ -74,7 +63,7 @@
                     ${j.status === 'draft' ? '<button class="btn primary sm" data-a="publish" type="button">Publish</button>' : ''}
                     ${j.status === 'closed' ? '<button class="btn ghost sm" data-a="reopen" type="button">Reopen</button>' : ''}
                 </div>
-            </article>`).join('') : '<div class="glass card empty">No jobs here yet.</div>';
+            </article>`).join('') : `<div class="glass card empty">${JOBS.length ? 'No jobs in this tab.' : 'No jobs yet. Click “Post a job” to create your first one.'}</div>`;
         $('#sub').textContent = cnt('live') + ' live · ' + cnt('draft') + ' draft · ' + cnt('closed') + ' closed';
     }
 
@@ -82,17 +71,26 @@
     $('#grid').addEventListener('click', e => {
         const b = e.target.closest('[data-a]'); if (!b) return;
         const j = JOBS.find(x => x.id == b.closest('.job-card').dataset.id), a = b.dataset.a;
-        if (a === 'publish') { j.status = 'live'; j.posted = 'Just now'; toast(j.title + ' is now live'); }
-        if (a === 'close')   { j.status = 'closed'; toast(j.title + ' closed'); }
-        if (a === 'reopen')  { j.status = 'live'; toast(j.title + ' reopened'); }
-        render();
+        b.disabled = true;
+        window.api('/recruiter/jobs/' + j.id + '/status', 'POST', { action: a })
+            .then(r => { j.status = r.status; j.posted = r.posted; render();
+                toast(j.title + (a === 'publish' ? ' is now live' : a === 'close' ? ' closed' : ' reopened')); })
+            .catch(err => { b.disabled = false; toast(err.message); });
     });
 
-    // composer + authenticity check (mock rules; the real check will call your fake-job model)
+    // composer + authenticity check (the server runs the real rules)
     const comp = $('#composer');
     $('#newBtn').onclick = () => { comp.hidden = false; comp.scrollIntoView({ behavior: 'smooth', block: 'start' }); $('#title').focus(); };
     $('#closeComposer').onclick = () => { comp.hidden = true; };
     const setErr = (id, msg) => { const f = $('#' + id).closest('.f'); f.classList.toggle('err', !!msg); f.querySelector('.msg-err').textContent = msg || ''; return !msg; };
+
+    const FIELD = { title: 'title', location: 'loc', salary_min: 'smin', salary_max: 'smin', description: 'desc' };
+    const showVerdict = (checks, pass) => {
+        const verdict = $('#verdict'); verdict.hidden = false;
+        verdict.className = 'wide verdict ' + (pass ? 'pass' : 'fail');
+        verdict.innerHTML = `<strong>${pass ? 'Passed. This posting looks genuine.' : 'Needs changes before it can go live.'}</strong><ul>` +
+            checks.map(c => `<li class="${c.ok ? 'ok' : 'bad'}">${c.ok ? '✓' : '✕'} ${esc(c.label)}</li>`).join('') + '</ul>';
+    };
 
     $('#jobForm').addEventListener('submit', e => {
         e.preventDefault();
@@ -106,25 +104,19 @@
         ].every(Boolean);
         if (!ok) return;
 
-        const text = (v('title') + ' ' + v('desc')).toLowerCase();
-        const checks = [
-            ['Company is verified', true],
-            ['No upfront fee requested', !/(registration|processing|training|security) (fee|deposit)|pay (to|before)|send money/.test(text)],
-            ['Contact stays on JobSphere', !/(whatsapp|telegram) (only|number)|contact me on|gmail\.com|yahoo\.com/.test(text)],
-            ['Salary looks realistic', !(max && max > 400000) && !/guaranteed|earn \d+ ?(k|000) (daily|per day)|easy money/.test(text)]
-        ];
-        const pass = checks.every(c => c[1]);
-        const verdict = $('#verdict');
-        verdict.hidden = false;
-        verdict.className = 'wide verdict ' + (pass ? 'pass' : 'fail');
-        verdict.innerHTML = `<strong>${pass ? 'Passed. This posting looks genuine.' : 'Needs changes before it can go live.'}</strong><ul>` +
-            checks.map(([l, ok]) => `<li class="${ok ? 'ok' : 'bad'}">${ok ? '✓' : '✕'} ${l}</li>`).join('') + '</ul>';
-        if (!pass) return;
-
-        JOBS.unshift({ id: Date.now(), title: v('title'), loc: v('loc'), type: $('#type').value, status: 'draft', apps: 0, strong: 0, posted: 'Not published', goal: 25,
-                       skills: v('skills') ? v('skills').split(',').map(s => s.trim()).filter(Boolean).slice(0, 5) : [] });
-        filter = 'all'; render(); toast('Saved as a draft. Publish it when you are ready.');
-        setTimeout(() => { comp.hidden = true; $('#jobForm').reset(); verdict.hidden = true; }, 1400);
+        const btn = $('#jobForm button[type=submit]'); btn.disabled = true;
+        window.api('/recruiter/jobs', 'POST', {
+            title: v('title'), location: v('loc'), type: $('#type').value,
+            salary_min: min || null, salary_max: max || null, description: v('desc'), skills: v('skills')
+        }).then(r => {
+            showVerdict(r.checks, true);
+            JOBS.unshift(r.job); filter = 'all'; render(); toast('Saved as a draft. Publish it when you are ready.');
+            setTimeout(() => { comp.hidden = true; $('#jobForm').reset(); $('#verdict').hidden = true; }, 1400);
+        }).catch(err => {
+            if (err.data && err.data.checks) showVerdict(err.data.checks, false);
+            else if (err.data && err.data.errors) Object.entries(err.data.errors).forEach(([k, m]) => FIELD[k] && setErr(FIELD[k], m[0]));
+            else toast(err.message);
+        }).finally(() => { btn.disabled = false; });
     });
 
     render();
