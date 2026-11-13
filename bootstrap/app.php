@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias(['recruiter.verified' => \App\Http\Middleware\EnsureRecruiterVerified::class]);
+        $middleware->alias([
+            'recruiter.verified' => \App\Http\Middleware\EnsureRecruiterVerified::class,
+            'candidate'          => \App\Http\Middleware\EnsureCandidate::class,
+        ]);
         $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $request) =>
             $request->is('recruiter/*') ? route('recruiter.login') : route('login'));
 

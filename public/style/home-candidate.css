@@ -26,19 +26,15 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 
-/* very light red ambient glow */
+/* very light red ambient glow (static, no animation for fast load) */
 body::before {
     content: ''; position: fixed; inset: -25%; z-index: -1; pointer-events: none;
     background:
         radial-gradient(640px 420px at 82% 12%, rgba(150, 23, 26, .06), transparent 68%),
         radial-gradient(700px 480px at 12% 88%, rgba(150, 23, 26, .045), transparent 66%),
         radial-gradient(520px 380px at 52% 48%, rgba(255, 255, 255, .9), transparent 70%);
-    animation: ambient 16s ease-in-out infinite alternate; will-change: transform;
 }
-@keyframes ambient {
-    0%   { transform: translate3d(-6%, -4%, 0) scale(1) rotate(0deg); }
-    100% { transform: translate3d(7%, 5%, 0) scale(1.18) rotate(6deg); }
-}
+@keyframes ambient { 0% { transform: none; } 100% { transform: none; } }
 
 /* small teal gradient, top right corner */
 body::after {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Application;
 use App\Models\Interview;
 use App\Models\JobPost;
+use App\Models\Notification;
 use App\Support\CandidateInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -36,6 +37,15 @@ class RecruiterApplicantsController extends Controller
         $this->own($request, $application);
         $v = $request->validate(['stage' => 'required|in:new,short,interview,offer,rejected']);
         $application->update(['status' => self::TO_DB[$v['stage']]]);
+
+        Notification::create([
+            'user_id' => $application->candidate_id,
+            'type'    => 'application',
+            'title'   => 'Application status updated',
+            'body'    => 'Your application for “'.$application->job->title.'” is now '.ucfirst($application->status).'.',
+            'data'    => ['job_id' => $application->job_id, 'application_id' => $application->id],
+        ]);
+
         return response()->json(['ok' => true]);
     }
 
@@ -61,6 +71,14 @@ class RecruiterApplicantsController extends Controller
             'status'         => 'waiting',
         ]);
         $application->update(['status' => 'interview']);
+
+        Notification::create([
+            'user_id' => $application->candidate_id,
+            'type'    => 'interview',
+            'title'   => 'Interview scheduled',
+            'body'    => 'You have an interview scheduled for “'.$application->job->title.'”.',
+            'data'    => ['job_id' => $application->job_id, 'application_id' => $application->id],
+        ]);
 
         return response()->json(['ok' => true]);
     }
