@@ -106,6 +106,21 @@
         </ul>
     </div>
 </section>
+
+<section class="glass card reveal">
+    <div class="card-head">
+        <div><h3>Your jobs</h3><p class="sub">Latest postings and how many people applied</p></div>
+        <a href="{{ route('recruiter.jobs') }}" class="btn ghost sm">Manage jobs</a>
+    </div>
+    <ul class="feed">
+        @forelse ($jobs as $j)
+            <li><span class="pip {{ $j->status === 'open' ? '' : 'c' }}"><svg class="ic"><use href="#i-brief"/></svg></span>
+                <div><b>{{ $j->title }}</b><small>{{ $j->location }} · {{ $j->type }} · {{ ['open' => 'Live', 'draft' => 'Draft', 'closed' => 'Closed'][$j->status] ?? $j->status }} · {{ $j->applications_count }} {{ $j->applications_count === 1 ? 'applicant' : 'applicants' }}</small></div></li>
+        @empty
+            <li class="sub">{{ $verified ? 'No jobs yet. Click “Post a job” to create your first one.' : 'Jobs appear here once your company is verified.' }}</li>
+        @endforelse
+    </ul>
+</section>
 @endsection
 
 @push('scripts')

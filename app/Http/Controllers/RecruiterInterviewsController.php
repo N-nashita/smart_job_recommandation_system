@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Models\Interview;
-use App\Models\Notification;
 use App\Support\CandidateInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -53,31 +52,13 @@ class RecruiterInterviewsController extends Controller
         abort_if($at->isPast(), 422, 'Pick a time in the future.');
 
         $interview->update(['scheduled_at' => $at->setTimezone(config('app.timezone')), 'status' => 'waiting']);
-
-        Notification::create([
-            'user_id' => $interview->application->candidate_id,
-            'type'    => 'interview',
-            'title'   => 'Interview rescheduled',
-            'body'    => 'Your interview time for “'.$interview->application->job->title.'” has been updated.',
-            'data'    => ['job_id' => $interview->application->job_id, 'application_id' => $interview->application_id],
-        ]);
-
         return response()->json(['ok' => true]);
     }
 
     public function destroy(Request $request, Interview $interview)
     {
         $this->own($request, $interview);
-        $interview->update(['status' => 'cancelled']);
-
-        Notification::create([
-            'user_id' => $interview->application->candidate_id,
-            'type'    => 'interview',
-            'title'   => 'Interview cancelled',
-            'body'    => 'Your interview for “'.$interview->application->job->title.'” has been cancelled.',
-            'data'    => ['job_id' => $interview->application->job_id, 'application_id' => $interview->application_id],
-        ]);
-
+        $interview->update(['status' => 'cancelled']);   // kept, so the candidate side can show "cancelled"
         return response()->json(['ok' => true]);
     }
 

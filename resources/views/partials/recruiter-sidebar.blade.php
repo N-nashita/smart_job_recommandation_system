@@ -7,6 +7,7 @@
         ['recruiter.applicants', 'Applicants', 'i-users'],
         ['recruiter.jobs',       'My jobs',    'i-brief'],
         ['recruiter.interviews', 'Interviews', 'i-cal'],
+        ['recruiter.company',    'Company',    'i-building'],
         ['recruiter.verification', 'Verification', 'i-shield'],
     ];
 @endphp
