@@ -13,8 +13,6 @@ class StoreApplicationRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'job_id' => ['required', 'integer', 'exists:job_posts,id'],
-        ];
+        return [];
     }
 }

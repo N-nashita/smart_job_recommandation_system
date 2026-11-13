@@ -2,6 +2,10 @@
 
 @section('title', 'CV — '.$c->name.' — JobSphere')
 
+@section('page-eyebrow', 'Candidate portal')
+@section('page-title', 'Curriculum Vitae')
+@section('page-sub', 'Auto-generated from your profile. Choose a template, then download as PDF (1 page).')
+
 @section('main')
 @php
     $skills = $c->skills ?? [];
@@ -36,9 +40,6 @@
 
 <div class="page-head">
     <div>
-        <div class="eyebrow">Candidate portal</div>
-        <h1 style="margin-top:10px">Curriculum Vitae</h1>
-        <p id="sub">Auto-generated from your profile. Choose a template, then download as PDF (1 page).</p>
     </div>
     <div class="acts">
         <a href="{{ route('candidate.profile.edit') }}" class="btn ghost sm">

@@ -2,12 +2,13 @@
 
 @section('title', 'Interviews — JobSphere')
 
+@section('page-eyebrow', 'Candidate portal')
+@section('page-title', 'Interviews')
+@section('page-sub', 'Interview calls scheduled by recruiters.')
+
 @section('main')
 <div class="page-head">
     <div>
-        <div class="eyebrow">Candidate portal</div>
-        <h1 style="margin-top:10px">Interviews</h1>
-        <p id="sub">Interview calls scheduled by recruiters.</p>
     </div>
     <div class="acts">
         <a href="{{ route('candidate.jobs') }}" class="btn primary">

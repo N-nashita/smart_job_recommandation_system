@@ -2,12 +2,13 @@
 
 @section('title', 'Saved Jobs — JobSphere')
 
+@section('page-eyebrow', 'Candidate portal')
+@section('page-title', 'Saved Jobs')
+@section('page-sub', 'Jobs you\'ve bookmarked for later.')
+
 @section('main')
 <div class="page-head">
     <div>
-        <div class="eyebrow">Candidate portal</div>
-        <h1 style="margin-top:10px">Saved Jobs</h1>
-        <p id="sub">Jobs you’ve bookmarked for later.</p>
     </div>
     <div class="acts">
         <a href="{{ route('candidate.jobs') }}" class="btn primary">

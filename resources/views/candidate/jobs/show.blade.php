@@ -1,20 +1,22 @@
 @extends('layouts.candidate')
 
-@section('title', '{{ $job->title }} — JobSphere')
+@section('title', $job->title . ' — JobSphere')
+
+@section('page-eyebrow', 'Job details')
+@section('page-title', '{{ $job->title }}')
+@section('page-sub')
+    {{ optional($job->recruiter)->company_name ?? '—' }}
+    @if (optional($job->recruiter)->verification_status === 'verified')
+        <span style="color:var(--accent-deep); font-weight:600; margin-left:6px;">
+            <svg class="ic" style="width:12px;height:12px;vertical-align:-1px"><use href="#i-shield"/></svg>
+            verified company
+        </span>
+    @endif
+@endsection
 
 @section('main')
 <div class="page-head">
     <div>
-        <div class="eyebrow">Job details</div>
-        <h1 style="margin-top:10px">{{ $job->title }}</h1>
-        <p id="sub">{{ optional($job->recruiter)->company_name ?? '—' }}
-            @if (optional($job->recruiter)->verification_status === 'verified')
-                <span style="color:var(--accent-deep); font-weight:600; margin-left:6px;">
-                    <svg class="ic" style="width:12px;height:12px;vertical-align:-1px"><use href="#i-shield"/></svg>
-                    verified company
-                </span>
-            @endif
-        </p>
     </div>
     <div class="tp-actions">
         <a href="{{ route('candidate.jobs') }}" class="btn ghost sm">

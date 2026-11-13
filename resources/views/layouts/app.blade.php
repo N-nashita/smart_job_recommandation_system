@@ -22,7 +22,16 @@
             @isset($header)
                 <header class="bg-white shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+                        @if(isset($headerTitle) && $headerTitle)
+                            <div class="flex items-center space-x-3 mb-4">
+                                <h2 class="text-2xl font-bold text-gray-900">{!! $headerTitle !!}</h2>
+                                @if(isset($headerSubtitle) && $headerSubtitle)
+                                    <p class="text-sm text-gray-500">{!! $headerSubtitle !!}</p>
+                                @endif
+                            </div>
+                        @else
+                            <h2 class="text-2xl font-bold text-gray-900">{!! $header !!}</h2>
+                        @endif
                     </div>
                 </header>
             @endisset

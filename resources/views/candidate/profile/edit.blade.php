@@ -2,12 +2,13 @@
 
 @section('title', 'Profile — JobSphere')
 
+@section('page-eyebrow', 'Candidate portal')
+@section('page-title', 'Profile')
+@section('page-sub', 'Edit your profile details. Your CV is generated from this information.')
+
 @section('main')
 <div class="page-head">
     <div>
-        <div class="eyebrow">Candidate portal</div>
-        <h1 style="margin-top:10px">Profile</h1>
-        <p id="sub">Edit your profile details. Your CV is generated from this information.</p>
     </div>
     <div class="acts">
         <a href="{{ route('candidate.dashboard') }}" class="btn ghost sm">

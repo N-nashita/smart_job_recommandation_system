@@ -2,12 +2,13 @@
 
 @section('title', 'My Applications — JobSphere')
 
+@section('page-eyebrow', 'Candidate portal')
+@section('page-title', 'My Applications')
+@section('page-sub', 'Track the status of every job you\'ve applied to.')
+
 @section('main')
 <div class="page-head">
     <div>
-        <div class="eyebrow">Candidate portal</div>
-        <h1 style="margin-top:10px">My Applications</h1>
-        <p id="sub">Track the status of every job you’ve applied to.</p>
     </div>
     <div class="acts">
         <a href="{{ route('candidate.jobs') }}" class="btn primary">

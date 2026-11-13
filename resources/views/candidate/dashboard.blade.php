@@ -140,25 +140,4 @@
     </div>
 </section>
 
-@push('scripts')
-<script>
-@verbatim
-(() => {
-    document.querySelectorAll('.apply-btn').forEach((b) => {
-        b.addEventListener('click', async () => {
-            try {
-                await window.api(b.dataset.url, 'POST');
-                b.textContent = 'Applied';
-                b.classList.add('applied');
-                b.disabled = true;
-                window.toast('Application submitted.');
-            } catch (err) {
-                window.toast(err.data && err.data.message ? err.data.message : err.message);
-            }
-        });
-    });
-})();
-@endverbatim
-</script>
-@endpush
 @endsection

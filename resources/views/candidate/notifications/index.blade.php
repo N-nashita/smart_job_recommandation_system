@@ -2,12 +2,13 @@
 
 @section('title', 'Notifications — JobSphere')
 
+@section('page-eyebrow', 'Candidate portal')
+@section('page-title', 'Notifications')
+@section('page-sub', 'Updates on your applications and interviews.')
+
 @section('main')
 <div class="page-head">
     <div>
-        <div class="eyebrow">Candidate portal</div>
-        <h1 style="margin-top:10px">Notifications</h1>
-        <p id="sub">Updates on your applications and interviews.</p>
     </div>
     <div class="acts">
         <a href="{{ route('candidate.dashboard') }}" class="btn ghost sm">
