@@ -8,8 +8,6 @@
 
 @section('main')
 <div class="page-head">
-    <div>
-    </div>
     <div class="acts">
         <a href="{{ route('candidate.profile.edit') }}" class="btn ghost sm">
             <svg class="ic"><use href="#i-pin"/></svg> Edit profile
@@ -31,8 +29,8 @@
             @endforeach
         </select>
         <select class="sel" name="location" aria-label="Location">
-            <option value="">All locations</option>
-            @foreach ($locations as $loc)
+            <option value="">All countries</option>
+            @foreach ($allCountries as $loc)
                 <option value="{{ $loc }}" {{ ($location ?? '') === $loc ? 'selected' : '' }}>{{ $loc }}</option>
             @endforeach
         </select>
@@ -47,6 +45,7 @@
     </form>
 </section>
 
+<!-- Job count -->
 <!-- Job count -->
 <div class="jobs-meta reveal">
     <span><b>{{ $jobs->total() }}</b> job{{ $jobs->total() !== 1 ? 's' : '' }} found</span>

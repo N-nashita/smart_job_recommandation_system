@@ -17,7 +17,7 @@ class CandidateApplicationsController extends Controller
         $query = Application::where('candidate_id', $c->id)
             ->with(['job.recruiter', 'interviews']);
 
-        $status = $request->string('status');
+        $status = $request->string('status')->trim()->toString();
         if ($status) {
             $query->where('status', $status);
         }
@@ -54,6 +54,7 @@ class CandidateApplicationsController extends Controller
             'job_post_id' => $job->id,
             'candidate_id' => $c->id,
             'match_score' => $score,
+            'cv_template' => $request->validated('cv_template'),
             'status'      => 'new',
             'skills_score' => (int) ($score * 0.9),
             'experience_score' => (int) ($score * 0.85),

@@ -1,10 +1,7 @@
 @extends('layouts.candidate')
 
-@section('title', 'CV — '.$c->name.' — JobSphere')
-
-@section('page-eyebrow', 'Candidate portal')
-@section('page-title', 'Curriculum Vitae')
-@section('page-sub', 'Auto-generated from your profile. Choose a template, then download as PDF (1 page).')
+@section('title', 'CV — '.$c->name)
+@section('hide-topbar', '1')
 
 @section('main')
 @php
@@ -14,7 +11,7 @@
     $certs  = collect(preg_split('/\r\n|\r|\n/', (string) $c->certifications))->map('trim')->filter()->values();
     $links  = collect(['LinkedIn' => $c->linkedin, 'GitHub' => $c->github, 'Portfolio' => $c->portfolio])->filter();
     $contact = collect([$c->phone, $c->email, $c->location])->filter()->all();
-    $role   = '';
+    $role   = collect([$c->category, $c->experience])->filter()->implode(' · ');
     $summary = $c->summary ?: 'Dedicated professional with experience in '.($c->category ?? 'my field').', seeking to contribute to a forward-thinking organization.'
         .($c->degree ? ' I hold a '.$c->degree.($c->major ? ' in '.$c->major : '').($c->institution ? ' from '.$c->institution : '').'.' : '');
     $period = function ($e) {
@@ -32,21 +29,24 @@
         ->sortByDesc(fn ($e) => (int) ($e['year'] ?? 0))
         ->values()->all();
     $templates = [
-        'classic'  => ['Classic', '2 column, good for all jobs'],
+        'classic'  => ['Classic', 'Two-column layout, suitable for any job'],
         'modern'   => ['Modern', 'Banner + timeline'],
-        'europass' => ['Europass', 'Formal, for abroad/scholarship'],
+        'europass' => ['Europass', 'Formal layout for international roles or scholarships'],
     ];
 @endphp
 
 <div class="page-head">
     <div>
+        <div class="eyebrow">Candidate portal</div>
+        <h1 style="margin-top:10px">Curriculum Vitae</h1>
+        <p id="sub">Auto-generated from your profile. Select Template then Print or Save as PDF.</p>
     </div>
     <div class="acts">
         <a href="{{ route('candidate.profile.edit') }}" class="btn ghost sm">
             <svg class="ic"><use href="#i-arrow-r"/></svg> Edit profile
         </a>
         <button class="btn primary" onclick="window.print()">
-            <svg class="ic"><use href="#i-file"/></svg> Download PDF
+            <svg class="ic"><use href="#i-file"/></svg> Print / Save PDF
         </button>
     </div>
 </div>
@@ -86,17 +86,12 @@
     }
     @media print {
         body.candidate .side, body.candidate .page-head, body.candidate .cv-picker,
-        body.candidate .no-print, body.candidate .toast,
-        body.candidate header.topbar, body.candidate .shell > header { display: none !important; }
+        body.candidate .no-print, body.candidate .toast { display: none !important; }
         body.candidate .shell { display: block; width: 100%; padding: 0; }
-        body.candidate .main { display: block; width: 100%; padding: 0; margin: 0; }
         body.candidate .cv-wrap.glass.card {
             padding: 0; border: 0; box-shadow: none; background: #fff;
             backdrop-filter: none; -webkit-backdrop-filter: none;
-            height: auto; overflow: visible;
         }
-        @page { size: A4; margin: 12mm; }
-        body.candidate .cv-wrap * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
 </style>
 @endsection

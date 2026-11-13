@@ -13,6 +13,8 @@ class StoreApplicationRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'cv_template' => ['required', 'string', 'in:classic,modern,europass'],
+        ];
     }
 }

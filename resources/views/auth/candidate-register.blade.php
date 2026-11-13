@@ -86,10 +86,7 @@
                         </div>
                     </div>
                     <div class="f"><label for="phone">Phone</label>
-                        <div class="phone">
-                            <span>+880</span>
-                            <input id="phone" name="phone" type="tel" autocomplete="tel-national" placeholder="1XXX XXXXXX">
-                        </div>
+                        <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+880 1XXX XXXXXX">
                         <span class="msg-err"></span>
                     </div>
                     <div class="row2">

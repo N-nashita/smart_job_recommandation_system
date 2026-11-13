@@ -9,8 +9,6 @@
 @section('main')
 <div class="page-head">
     <div>
-    </div>
-    <div class="acts">
         <a href="{{ route('candidate.jobs') }}" class="btn primary">
             <svg class="ic"><use href="#i-brief"/></svg> Browse jobs
         </a>

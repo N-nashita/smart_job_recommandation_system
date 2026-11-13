@@ -4,13 +4,13 @@
 
 @section('page-eyebrow', 'Candidate portal')
 @section('page-title', 'My Applications')
-@section('page-sub', 'Track the status of every job you\'ve applied to.')
+@section('page-sub')
+    <span class="application-sub">Track the status of every job you've applied to.</span>
+@endsection
 
 @section('main')
 <div class="page-head">
     <div>
-    </div>
-    <div class="acts">
         <a href="{{ route('candidate.jobs') }}" class="btn primary">
             <svg class="ic"><use href="#i-brief"/></svg> Browse jobs
         </a>
@@ -18,18 +18,22 @@
 </div>
 
 <!-- Status filter tabs -->
-<section class="tools reveal">
-    <div class="row">
-        <div class="tabs" id="statusTabs">
-            <a href="{{ request()->fullUrlWithQuery(['status' => null]) }}" class="{{ $status ? '' : 'on' }}">All</a>
+<section >
+        <nav class="tabs" id="statusTabs" aria-label="Filter applications by status">
+            <a href="{{ request()->fullUrlWithQuery(['status' => null]) }}"
+               class="{{ $status ? '' : 'on' }}"
+               aria-current="{{ $status ? 'false' : 'page' }}">All</a>
             @foreach ($statuses as $key => $label)
-                <a href="{{ request()->fullUrlWithQuery(['status' => $key]) }}" class="{{ $status === $key ? 'on' : '' }}">{{ $label }}</a>
+                <a href="{{ request()->fullUrlWithQuery(['status' => $key]) }}"
+                   class="{{ $status === $key ? 'on' : '' }}"
+                   aria-current="{{ $status === $key ? 'page' : 'false' }}">{{ $label }}</a>
             @endforeach
-        </div>
-        <span class="chk" style="margin-left:auto">
+        </nav>
+        
+        <span class="chk application-total">
             {{ $applications->total() }} total
         </span>
-    </div>
+    
 </section>
 
 <!-- Applications table -->

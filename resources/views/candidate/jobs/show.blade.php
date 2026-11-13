@@ -3,7 +3,7 @@
 @section('title', $job->title . ' — JobSphere')
 
 @section('page-eyebrow', 'Job details')
-@section('page-title', '{{ $job->title }}')
+@section('page-title', $job->title)
 @section('page-sub')
     {{ optional($job->recruiter)->company_name ?? '—' }}
     @if (optional($job->recruiter)->verification_status === 'verified')
@@ -15,16 +15,25 @@
 @endsection
 
 @section('main')
-<div class="page-head">
-    <div>
-    </div>
+@php
+    $companyName = optional($job->recruiter)->company_name ?: 'Company';
+    $companyInitials = collect(preg_split('/\s+/', trim($companyName)))
+        ->filter()
+        ->map(fn ($word) => mb_strtoupper(mb_substr($word, 0, 1)))
+        ->take(2)
+        ->implode('');
+@endphp
+
+<div class="job-detail-actions">
+    <a href="{{ route('candidate.jobs') }}" class="btn ghost sm">
+        <svg class="ic"><use href="#i-arrow-r"/></svg> Back to jobs
+    </a>
     <div class="tp-actions">
-        <a href="{{ route('candidate.jobs') }}" class="btn ghost sm">
-            <svg class="ic"><use href="#i-arrow-r"/></svg> Back to jobs
-        </a>
         @if (!$applied)
             <button class="btn primary apply-btn"
                     data-url="{{ route('candidate.applications.store', $job->id) }}"
+                    data-job-id="{{ $job->id }}"
+                    data-job-title="{{ $job->title }}"
                     type="button">Apply now</button>
         @else
             <button class="btn applied sm" disabled>Applied</button>
@@ -40,54 +49,64 @@
 
 <section class="split reveal">
     <div class="stack">
-        <div class="glass card">
-            <div class="card-head">
-                <div><h3>About this role</h3></div>
+        <div class="glass card job-description-card">
+            <div class="detail-heading">
+                <span class="detail-kicker">Role overview</span>
+                <h2>About this role</h2>
             </div>
-            <p style="color:var(--ink); line-height:1.6; white-space:pre-line;">{{ $job->description }}</p>
+            <p class="job-description">{{ $job->description }}</p>
         </div>
 
-        <div class="glass card" style="margin-top:22px">
-            <div class="card-head">
-                <div><h3>Match score</h3></div>
+        <div class="glass card match-card">
+            <div class="detail-heading">
+                <span class="detail-kicker">Your fit</span>
+                <h2>Match score</h2>
             </div>
-            <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:10px">
-                <b style="font-size:2rem; color:var(--accent-deep)">{{ $score }}%</b>
-                <span style="color:var(--muted)">match with your profile</span>
+            <div class="match-value">
+                <b>{{ $score }}%</b>
+                <span>match with your profile</span>
             </div>
             <div class="score-fill"><span style="width:{{ $score }}%"></span></div>
-            <p class="sub" style="margin-top:8px">Placeholder scoring — ML model plugs in later.</p>
+            <p class="match-note">Based on your skills, experience and location.</p>
         </div>
     </div>
 
-    <div class="stack" style="max-width:340px">
-        <div class="glass card prev">
+    <div class="stack job-detail-side">
+        <div class="glass card company-card">
             <div class="ph">
-                <div class="avatar">{{ \App\Support\CandidateInfo::initials(optional($job->recruiter)) }}</div>
+                <div class="avatar">{{ $companyInitials }}</div>
                 <div>
-                    <strong style="font-size:1rem">{{ optional($job->recruiter)->company_name ?? 'Company' }}</strong>
-                    <small>{{ optional($job->recruiter)->industry ?? '' }} · {{ optional($job->recruiter)->hq_location ?? '' }}</small>
+                    <strong>{{ $companyName }}</strong>
+                    <small>{{ optional($job->recruiter)->industry ?? 'Employer' }} · {{ optional($job->recruiter)->hq_location ?? 'Location not listed' }}</small>
                 </div>
             </div>
-            <table style="width:100%; font-size:0.88rem; margin-top:16px">
-                <tbody>
-                    <tr><td style="color:var(--muted); width:40%">Location</td><td>{{ $job->location ?? '—' }}</td></tr>
-                    <tr><td style="color:var(--muted)">Type</td><td>{{ $job->type ?? '—' }}</td></tr>
-                    <tr><td style="color:var(--muted)">Salary</td><td>
-                        @if ($job->salary_min && $job->salary_max)
-                            {{ '$' . number_format($job->salary_min) }} – {{ '$' . number_format($job->salary_max) }}
-                        @else
-                            —
-                        @endif
-                    </td></tr>
-                </tbody>
-            </table>
+            @if (optional($job->recruiter)->name || optional($job->recruiter)->verification_status === 'verified')
+                <div class="company-badges">
+                    @if (optional($job->recruiter)->name)
+                        <span class="recruiter-name">Recruiter: {{ $job->recruiter->name }}</span>
+                    @endif
+                    @if (optional($job->recruiter)->verification_status === 'verified')
+                        <span class="verified-pill"><svg class="ic"><use href="#i-shield"/></svg> Verified company</span>
+                    @endif
+                </div>
+            @endif
+            <div class="job-facts">
+                <div><span>Location</span><b>{{ $job->location ?? '—' }}</b></div>
+                <div><span>Job type</span><b>{{ $job->type ?? '—' }}</b></div>
+                <div><span>Salary</span><b>
+                    @if ($job->salary_min && $job->salary_max)
+                        {{ '$' . number_format($job->salary_min) }} – {{ '$' . number_format($job->salary_max) }}
+                    @else
+                        Not disclosed
+                    @endif
+                </b></div>
+            </div>
             @if ($job->skills && count($job->skills))
-                <div style="margin-top:16px">
-                    <p class="sub" style="margin-bottom:6px">Required skills</p>
-                    <div style="display:flex; gap:6px; flex-wrap:wrap">
+                <div class="required-skills">
+                    <p class="detail-kicker">Required skills</p>
+                    <div class="skill-list">
                         @foreach ($job->skills as $skill)
-                            <span style="background:var(--sand); color:var(--accent-deep); border-radius:999px; padding:4px 10px; font-size:0.8rem; font-weight:500">{{ $skill }}</span>
+                            <span>{{ $skill }}</span>
                         @endforeach
                     </div>
                 </div>
@@ -100,21 +119,6 @@
 <script>
 @verbatim
 (() => {
-    const applyBtn = document.querySelector('.apply-btn');
-    if (applyBtn) {
-        applyBtn.addEventListener('click', async () => {
-            try {
-                await window.api(applyBtn.dataset.url, 'POST');
-                applyBtn.textContent = 'Applied';
-                applyBtn.classList.add('applied');
-                applyBtn.disabled = true;
-                window.toast('Application submitted.');
-            } catch (err) {
-                window.toast(err.data && err.data.message ? err.data.message : err.message);
-            }
-        });
-    }
-
     const saveBtn = document.querySelector('.save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', async () => {
