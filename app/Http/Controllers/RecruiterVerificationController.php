@@ -4,35 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Services\CompanyVerifier;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class RecruiterVerificationController extends Controller
 {
-    public function upload(Request $request)
+    /** Fix the details the checks use, then run the checks again. */
+    public function update(Request $request)
     {
-        $request->validate([
-            'document' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:4096'],
-        ], [
-            'document.mimes' => 'Upload a PDF, JPG or PNG file.',
-            'document.max'   => 'The file must be 4 MB or smaller.',
-        ]);
-
         $r = $request->user('recruiter');
-        if ($r->verification_document) Storage::delete($r->verification_document);
+        abort_if($r->verification_status === 'verified', 403);
 
-        $r->forceFill([
-            'verification_document'     => $request->file('document')->store('verification'),   // private disk, not public
-            'verification_status'       => $r->verification_status === 'verified' ? 'verified' : 'pending',
-            'verification_note'         => null,
-            'verification_submitted_at' => now(),
-        ])->save();
+        $v = $request->validate([
+            'website'         => ['required', 'string', 'max:255'],
+            'registration_no' => ['required', 'regex:/^[A-Za-z0-9][A-Za-z0-9\-\/\. ]{3,29}$/'],
+        ], ['registration_no.regex' => 'Use 4 to 30 letters, numbers, dashes or slashes.']);
 
-        return back()->with('status', 'Document received. Our team will review it soon.');
+        $r->forceFill($v)->save();
+        $status = app(CompanyVerifier::class)->evaluate($r);
+
+        return back()->with('status', $status === 'verified' ? 'Your company is verified.' : 'Details saved. Some checks still need attention.');
     }
 
     public function recheck(Request $request)
     {
-        app(CompanyVerifier::class)->evaluate($request->user('recruiter'));
-        return back()->with('status', 'Checks updated.');
+        $status = app(CompanyVerifier::class)->evaluate($request->user('recruiter'));
+        return back()->with('status', $status === 'verified' ? 'Your company is verified.' : 'Checks updated.');
     }
 }

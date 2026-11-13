@@ -23,29 +23,6 @@
         location.href = "/recruiter/login";
     });
 
-    // fetch helper for JSON endpoints (CSRF + errors -> Error with .data)
-    window.api = async (url, method, body) => {
-        const token = document.querySelector('meta[name="csrf-token"]').content;
-        const res = await fetch(url, {
-            method,
-            headers: {
-                "X-CSRF-TOKEN": token,
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok)
-            throw Object.assign(
-                new Error(
-                    data.message || "Something went wrong. Please try again.",
-                ),
-                { data },
-            );
-        return data;
-    };
-
     // Unverified recruiters can browse but not act. (The real lock is the recruiter.verified middleware on the server.)
     if (window.RECRUITER_VERIFIED === false) {
         const ACTION = "[data-a], [data-next], #newBtn, #send, #save";
