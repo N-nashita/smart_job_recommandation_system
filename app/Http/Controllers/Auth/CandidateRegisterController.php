@@ -48,6 +48,6 @@ class CandidateRegisterController extends Controller
 
         Auth::guard('web')->login($candidate);
 
-        return redirect('/dashboard');
+        return redirect()->route('candidate.dashboard');
     }
 }

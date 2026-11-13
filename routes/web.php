@@ -9,6 +9,13 @@ use App\Http\Controllers\RecruiterVerificationController;
 use App\Http\Controllers\RecruiterApplicantsController;
 use App\Http\Controllers\RecruiterInterviewsController;
 use App\Http\Controllers\RecruiterJobsController;
+use App\Http\Controllers\CandidateDashboardController;
+use App\Http\Controllers\CandidateJobsController;
+use App\Http\Controllers\CandidateApplicationsController;
+use App\Http\Controllers\CandidateSavedJobsController;
+use App\Http\Controllers\CandidateInterviewsController;
+use App\Http\Controllers\CandidateNotificationsController;
+use App\Http\Controllers\CandidateProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('home'))->name('home');
@@ -54,6 +61,30 @@ Route::middleware('auth:recruiter')->prefix('recruiter')->group(function () {
     });
 });
 
+/* ---------- Candidate: logged in ---------- */
+Route::middleware(['auth', 'candidate'])->prefix('candidate')->name('candidate.')->group(function () {
+    Route::get('/dashboard', [CandidateDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/jobs', [CandidateJobsController::class, 'index'])->name('jobs');
+    Route::get('/jobs/{job}', [CandidateJobsController::class, 'show'])->name('jobs.show');
+
+    Route::post('/jobs/{job}/apply', [CandidateApplicationsController::class, 'store'])->name('applications.store');
+    Route::post('/jobs/{job}/save',  [CandidateSavedJobsController::class, 'toggle'])->name('saved.toggle');
+
+    Route::get('/saved',       [CandidateSavedJobsController::class, 'index'])->name('saved');
+    Route::get('/applications',[CandidateApplicationsController::class, 'index'])->name('applications');
+    Route::delete('/applications/{application}', [CandidateApplicationsController::class, 'destroy'])->name('applications.destroy');
+
+    Route::get('/interviews',  [CandidateInterviewsController::class, 'index'])->name('interviews');
+
+    Route::get('/notifications', [CandidateNotificationsController::class, 'index'])->name('notifications');
+    Route::patch('/notifications/{notification}/read', [CandidateNotificationsController::class, 'read'])->name('notifications.read');
+
+    Route::get('/profile', [CandidateProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [CandidateProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/cv', [CandidateProfileController::class, 'cv'])->name('profile.cv');
+});
+
 /* ---------- Admin: company review ---------- */
 Route::middleware(['auth', 'can:review-verifications'])->prefix('admin')->group(function () {
     Route::get('/verifications', [VerificationReviewController::class, 'index'])->name('admin.verifications');
@@ -63,7 +94,9 @@ Route::middleware(['auth', 'can:review-verifications'])->prefix('admin')->group(
 });
 
 /* ---------- Candidate (Breeze) ---------- */
-Route::get('/dashboard', fn () => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', fn () => redirect()->route('candidate.dashboard'))
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

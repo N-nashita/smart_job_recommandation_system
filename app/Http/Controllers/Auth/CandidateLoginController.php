@@ -24,7 +24,7 @@ class CandidateLoginController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard');
+            return redirect()->intended(route('candidate.dashboard'));
         }
 
         return back()->withErrors([
