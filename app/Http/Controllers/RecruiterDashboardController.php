@@ -22,7 +22,7 @@ class RecruiterDashboardController extends Controller
             'verified' => $verified,
             'stats' => ['new' => 0, 'interviews' => 0, 'open' => 0],
             'matches' => collect(), 'interviews' => collect(),
-            'auto' => collect(), 'tasks' => collect(),
+            'auto' => collect(), 'tasks' => collect(), 'jobs' => collect(),
         ];
         if (! $verified) {
             return view('recruiter.dashboard', $data);
@@ -45,6 +45,7 @@ class RecruiterDashboardController extends Controller
         foreach ($drafts->take(2) as $d) $auto->push(['title' => "Publish “{$d->title}”", 'note' => 'Still a draft', 'url' => route('recruiter.jobs')]);
         if ($newCount && ! $strong) $auto->push(['title' => "Review {$newCount} new ".str('applicant')->plural($newCount), 'note' => 'Waiting for a first look', 'url' => route('recruiter.applicants')]);
 
+        $data['jobs']       = JobPost::where('recruiter_id', $r->id)->withCount('applications')->latest()->limit(5)->get();
         $data['stats']      = ['new' => $newCount, 'interviews' => $todays->count(), 'open' => $openCount];
         $data['matches']    = (clone $apps)->where('status', 'new')->with('candidate', 'job')->orderByDesc('match_score')->limit(3)->get();
         $data['interviews'] = $todays;

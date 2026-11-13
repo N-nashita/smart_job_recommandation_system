@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Http;
 class CompanyVerifier
 {
     /**
-     * Run every automatic check, save the result and return the new status.
-     * Only a registry confirmation can verify a company automatically.
-     * Everything else stays "pending" until an admin reviews the uploaded document.
+     * Run the four automatic checks, save the result and return the new status.
+     * All four must pass to become "verified"; otherwise the recruiter stays "pending"
+     * and can fix the details and run the checks again. No admin and no paid API involved.
      */
     public function evaluate(Recruiter $r): string
     {
@@ -19,27 +19,15 @@ class CompanyVerifier
             $this->workEmail($r),
             $this->emailMatchesWebsite($r),
             $this->websiteReachable($r),
-            $this->registryLookup($r),
         ];
 
-        $by      = collect($checks)->keyBy('key');
-        $failed  = $by->contains('status', 'fail');
-        $auto    = ! $failed
-                   && $by['registry']['status'] === 'pass'
-                   && $by['email_domain']['status'] === 'pass';
-
-        $status = match (true) {
-            $r->verification_status === 'verified' => 'verified',      // never downgrade automatically
-            $auto                                  => 'verified',
-            $r->verification_status === 'rejected' => 'rejected',      // stays rejected until new document
-            default                                => 'pending',
-        };
+        $allPass = collect($checks)->every(fn ($c) => $c['status'] === 'pass');
+        $status  = ($r->verification_status === 'verified' || $allPass) ? 'verified' : 'pending';   // never auto-downgrade
 
         $r->forceFill([
-            'verification_checks'       => json_encode($checks),
-            'verification_status'       => $status,
-            'verified_at'               => $status === 'verified' ? ($r->verified_at ?? now()) : $r->verified_at,
-            'verification_submitted_at' => $r->verification_submitted_at ?? now(),
+            'verification_checks' => json_encode($checks),
+            'verification_status' => $status,
+            'verified_at'         => $status === 'verified' ? ($r->verified_at ?? now()) : $r->verified_at,
         ])->save();
 
         return $status;
@@ -65,7 +53,7 @@ class CompanyVerifier
     protected function emailMatchesWebsite(Recruiter $r): array
     {
         $host = self::hostOf($r->website);
-        if (! $host) return $this->check('email_domain', 'Email matches website', 'skip', 'No website was given.');
+        if (! $host) return $this->check('email_domain', 'Email matches website', 'fail', 'Add your company website so we can check it.');
         $domain = self::emailDomain($r->email);
         $ok = self::domainMatches($domain, $host);
         return $this->check('email_domain', 'Email matches website', $ok ? 'pass' : 'warn',
@@ -75,7 +63,7 @@ class CompanyVerifier
     protected function websiteReachable(Recruiter $r): array
     {
         $host = self::hostOf($r->website);
-        if (! $host) return $this->check('website', 'Website is online', 'skip', 'No website was given.');
+        if (! $host) return $this->check('website', 'Website is online', 'fail', 'Add your company website so we can check it.');
         if (! self::isPublicHost($host)) return $this->check('website', 'Website is online', 'fail', 'The website address could not be resolved to a public server.');
 
         try {
@@ -86,39 +74,6 @@ class CompanyVerifier
                 $ok ? 'The website responds over HTTPS.' : 'The website answered with an error (' . $resp->status() . ').');
         } catch (\Throwable $e) {
             return $this->check('website', 'Website is online', 'warn', 'The website could not be reached right now.');
-        }
-    }
-
-    protected function registryLookup(Recruiter $r): array
-    {
-        if (config('verification.registry_driver') !== 'opencorporates' || ! config('verification.opencorporates.token')) {
-            return $this->check('registry', 'Company registry', 'skip', 'No registry is connected. A reviewer checks the certificate instead.');
-        }
-
-        try {
-            $jur  = config('verification.opencorporates.jurisdiction');
-            $resp = Http::timeout(8)->acceptJson()->get(
-                'https://api.opencorporates.com/v0.4/companies/' . $jur . '/' . rawurlencode(trim($r->registration_no)),
-                ['api_token' => config('verification.opencorporates.token')]
-            );
-
-            if ($resp->status() === 404) {
-                return $this->check('registry', 'Company registry', 'warn', 'Number not found in the registry (it may not be covered). A reviewer will check.');
-            }
-            if (! $resp->ok()) {
-                return $this->check('registry', 'Company registry', 'warn', 'The registry could not be queried right now.');
-            }
-
-            $c = $resp->json('results.company');
-            if (! empty($c['inactive'])) {
-                return $this->check('registry', 'Company registry', 'fail', 'The registry lists this company as inactive.');
-            }
-            if (! self::nameSimilar($c['name'] ?? '', $r->company_name)) {
-                return $this->check('registry', 'Company registry', 'fail', 'The registered name (' . ($c['name'] ?? '?') . ') does not match the company name given.');
-            }
-            return $this->check('registry', 'Company registry', 'pass', 'Found and active: ' . $c['name'] . '.');
-        } catch (\Throwable $e) {
-            return $this->check('registry', 'Company registry', 'warn', 'The registry could not be queried right now.');
         }
     }
 

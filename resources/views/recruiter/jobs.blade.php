@@ -4,7 +4,7 @@
 
 @section('main')
 <div class="page-head">
-    <div><div class="eyebrow">Recruiter workspace</div><h1 style="margin-top:10px">My jobs</h1><p id="sub">Every posting is checked before it goes live.</p></div>
+    <div><div class="eyebrow">Recruiter workspace</div><h1 style="margin-top:10px">My jobs</h1><p id="sub">Your job postings.</p></div>
     <div class="acts">
         <div class="tabs" id="tabs"></div>
         <button class="btn primary" id="newBtn" type="button"><svg class="ic"><use href="#i-plus"/></svg> Post a job</button>
@@ -13,7 +13,7 @@
 
 <!-- composer -->
 <section class="glass card" id="composer" hidden>
-    <div class="card-head"><div><h3>New job posting</h3><p class="sub">We run an authenticity check before it can go live.</p></div>
+    <div class="card-head"><div><h3 id="composerTitle">New job posting</h3><p class="sub">Fill in the details, then save it as a draft or publish it right away.</p></div>
         <button class="btn ghost sm" id="closeComposer" type="button">Cancel</button></div>
     <form id="jobForm" class="jform" novalidate>
         <div class="f"><label for="title">Job title</label><input id="title" placeholder="e.g. Backend Engineer"><span class="msg-err"></span></div>
@@ -23,8 +23,7 @@
             <div class="two"><input id="smin" type="number" min="0" placeholder="Min"><input id="smax" type="number" min="0" placeholder="Max"></div><span class="msg-err"></span></div>
         <div class="f wide"><label for="desc">Description</label><textarea id="desc" rows="5" placeholder="What will this person do? What skills do they need?"></textarea><span class="msg-err"></span></div>
         <div class="f wide"><label for="skills">Required skills <small style="color:var(--muted)">(comma separated)</small></label><input id="skills" placeholder="Laravel, MySQL, REST APIs"></div>
-        <div class="wide" id="verdict" hidden></div>
-        <div class="wide"><button class="btn primary" type="submit">Run authenticity check <svg class="ic"><use href="#i-shield"/></svg></button></div>
+        <div class="wide row" style="display:flex;gap:12px"><button class="btn primary" type="submit" value="publish">Publish now</button><button class="btn ghost" type="submit" value="draft">Save as draft</button><button class="btn primary" type="submit" value="save" id="saveEdit" hidden>Save changes</button></div>
     </form>
 </section>
 
@@ -56,12 +55,13 @@
                 <div class="skills">${j.skills.map(s => `<span>${esc(s)}</span>`).join('')}</div>
                 <div class="meter"><i style="width:${Math.min(100, Math.round(j.apps / j.goal * 100))}%"></i></div>
                 <div class="jf"><span><b>${j.apps}</b> applicants</span><span><b>${j.strong}</b> strong matches</span></div>
-                <div class="jchk"><svg class="ic"><use href="#i-shield"/></svg> Authenticity check passed</div>
                 <div class="jact">
                     <a class="btn ghost sm" href="/recruiter/applicants">View applicants</a>
                     ${j.status === 'live' ? '<button class="btn ghost sm" data-a="close" type="button">Close</button>' : ''}
                     ${j.status === 'draft' ? '<button class="btn primary sm" data-a="publish" type="button">Publish</button>' : ''}
                     ${j.status === 'closed' ? '<button class="btn ghost sm" data-a="reopen" type="button">Reopen</button>' : ''}
+                    <button class="btn ghost sm" data-a="edit" type="button">Edit</button>
+                    ${j.apps === 0 ? '<button class="btn danger sm" data-a="delete" type="button">Delete</button>' : ''}
                 </div>
             </article>`).join('') : `<div class="glass card empty">${JOBS.length ? 'No jobs in this tab.' : 'No jobs yet. Click “Post a job” to create your first one.'}</div>`;
         $('#sub').textContent = cnt('live') + ' live · ' + cnt('draft') + ' draft · ' + cnt('closed') + ' closed';
@@ -71,6 +71,14 @@
     $('#grid').addEventListener('click', e => {
         const b = e.target.closest('[data-a]'); if (!b) return;
         const j = JOBS.find(x => x.id == b.closest('.job-card').dataset.id), a = b.dataset.a;
+        if (a === 'edit') return openEdit(j);
+        if (a === 'delete') {
+            if (!confirm('Delete "' + j.title + '"? This cannot be undone.')) return;
+            b.disabled = true;
+            return window.api('/recruiter/jobs/' + j.id, 'DELETE')
+                .then(() => { JOBS.splice(JOBS.indexOf(j), 1); render(); toast(j.title + ' deleted'); })
+                .catch(err => { b.disabled = false; toast(err.message); });
+        }
         b.disabled = true;
         window.api('/recruiter/jobs/' + j.id + '/status', 'POST', { action: a })
             .then(r => { j.status = r.status; j.posted = r.posted; render();
@@ -78,19 +86,27 @@
             .catch(err => { b.disabled = false; toast(err.message); });
     });
 
-    // composer + authenticity check (the server runs the real rules)
+    // composer
     const comp = $('#composer');
-    $('#newBtn').onclick = () => { comp.hidden = false; comp.scrollIntoView({ behavior: 'smooth', block: 'start' }); $('#title').focus(); };
-    $('#closeComposer').onclick = () => { comp.hidden = true; };
+    let editing = null;   // the job being edited, or null when creating
+    const mode = job => {
+        editing = job;
+        $('#composerTitle').textContent = job ? 'Edit job posting' : 'New job posting';
+        document.querySelectorAll('#jobForm button[value=publish], #jobForm button[value=draft]').forEach(b => b.hidden = !!job);
+        $('#saveEdit').hidden = !job;
+    };
+    const open = () => { comp.hidden = false; comp.scrollIntoView({ behavior: 'smooth', block: 'start' }); $('#title').focus(); };
+    function openEdit(j) {
+        mode(j); $('#jobForm').reset();
+        $('#title').value = j.title; $('#loc').value = j.raw_loc; $('#type').value = j.type;
+        $('#smin').value = j.smin || ''; $('#smax').value = j.smax || ''; $('#desc').value = j.desc; $('#skills').value = j.skills.join(', ');
+        open();
+    }
+    $('#newBtn').onclick = () => { mode(null); $('#jobForm').reset(); open(); };
+    $('#closeComposer').onclick = () => { comp.hidden = true; mode(null); };
     const setErr = (id, msg) => { const f = $('#' + id).closest('.f'); f.classList.toggle('err', !!msg); f.querySelector('.msg-err').textContent = msg || ''; return !msg; };
 
     const FIELD = { title: 'title', location: 'loc', salary_min: 'smin', salary_max: 'smin', description: 'desc' };
-    const showVerdict = (checks, pass) => {
-        const verdict = $('#verdict'); verdict.hidden = false;
-        verdict.className = 'wide verdict ' + (pass ? 'pass' : 'fail');
-        verdict.innerHTML = `<strong>${pass ? 'Passed. This posting looks genuine.' : 'Needs changes before it can go live.'}</strong><ul>` +
-            checks.map(c => `<li class="${c.ok ? 'ok' : 'bad'}">${c.ok ? '✓' : '✕'} ${esc(c.label)}</li>`).join('') + '</ul>';
-    };
 
     $('#jobForm').addEventListener('submit', e => {
         e.preventDefault();
@@ -104,19 +120,18 @@
         ].every(Boolean);
         if (!ok) return;
 
-        const btn = $('#jobForm button[type=submit]'); btn.disabled = true;
-        window.api('/recruiter/jobs', 'POST', {
-            title: v('title'), location: v('loc'), type: $('#type').value,
-            salary_min: min || null, salary_max: max || null, description: v('desc'), skills: v('skills')
-        }).then(r => {
-            showVerdict(r.checks, true);
-            JOBS.unshift(r.job); filter = 'all'; render(); toast('Saved as a draft. Publish it when you are ready.');
-            setTimeout(() => { comp.hidden = true; $('#jobForm').reset(); $('#verdict').hidden = true; }, 1400);
+        const publish = !!(e.submitter && e.submitter.value === 'publish');
+        const btns = document.querySelectorAll('#jobForm button[type=submit]'); btns.forEach(b => b.disabled = true);
+        const body = { title: v('title'), location: v('loc'), type: $('#type').value, salary_min: min || null, salary_max: max || null, description: v('desc'), skills: v('skills') };
+        const req = editing ? window.api('/recruiter/jobs/' + editing.id, 'PUT', body) : window.api('/recruiter/jobs', 'POST', { ...body, publish });
+        req.then(r => {
+            if (editing) { JOBS[JOBS.indexOf(editing)] = { ...r.job, status: editing.status, posted: editing.posted }; toast('Changes saved'); }
+            else { JOBS.unshift(r.job); filter = 'all'; toast(publish ? v('title') + ' is now live' : 'Saved as a draft. Publish it when you are ready.'); }
+            render(); comp.hidden = true; mode(null); $('#jobForm').reset();
         }).catch(err => {
-            if (err.data && err.data.checks) showVerdict(err.data.checks, false);
-            else if (err.data && err.data.errors) Object.entries(err.data.errors).forEach(([k, m]) => FIELD[k] && setErr(FIELD[k], m[0]));
+            if (err.data && err.data.errors) Object.entries(err.data.errors).forEach(([k, m]) => FIELD[k] && setErr(FIELD[k], m[0]));
             else toast(err.message);
-        }).finally(() => { btn.disabled = false; });
+        }).finally(() => { btns.forEach(b => b.disabled = false); });
     });
 
     render();

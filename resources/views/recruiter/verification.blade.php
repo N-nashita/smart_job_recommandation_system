@@ -8,11 +8,10 @@
     $vs     = $r->verification_status;
     $checks = json_decode($r->verification_checks ?? '[]', true) ?: [];
     $icons  = ['pass' => '✓', 'warn' => '!', 'fail' => '✕', 'skip' => '–'];
-    $labels = ['verified' => 'Verified', 'pending' => 'Under review', 'rejected' => 'Rejected'];
+    $labels = ['verified' => 'Verified', 'pending' => 'Not verified'];
     $steps  = [
         ['Account created', true],
-        ['Automatic checks', count($checks) > 0],
-        ['Document reviewed', $vs === 'verified' || $vs === 'rejected'],
+        ['Checks run', count($checks) > 0],
         ['Verified', $vs === 'verified'],
     ];
 @endphp
@@ -52,21 +51,20 @@
     </div>
 
     <div class="glass card">
-        <h3>Company document</h3>
+        <h3>Company details</h3>
         @if ($vs === 'verified')
             <p class="sub" style="margin-top:8px">Your company is verified. No further action is needed.</p>
         @else
-            @if ($vs === 'rejected' && $r->verification_note)
-                <div class="vflash bad">Reason: {{ $r->verification_note }}</div>
-            @endif
-            <p class="sub" style="margin:8px 0 16px">Upload your trade licence or certificate of incorporation. Only our review team can open it.</p>
-            <form method="POST" action="{{ route('recruiter.verification.upload') }}" enctype="multipart/form-data" class="vup">
+            <p class="sub" style="margin:8px 0 16px">If a check failed, correct the details below. We check them again right away.</p>
+            <form method="POST" action="{{ route('recruiter.verification.update') }}" class="vup">
                 @csrf
-                <input type="file" name="document" accept=".pdf,.jpg,.jpeg,.png" required>
-                @if ($errors->any())<span class="msg-err" style="display:block">{{ $errors->first('document') }}</span>@endif
-                <button class="btn primary" type="submit">{{ $r->verification_document ? 'Replace document' : 'Upload document' }}</button>
+                <label class="dtl">Website <input name="website" value="{{ old('website', $r->website) }}" placeholder="https://yourcompany.com" required></label>
+                @error('website')<span class="msg-err">{{ $message }}</span>@enderror
+                <label class="dtl">Registration number <input name="registration_no" value="{{ old('registration_no', $r->registration_no) }}" required></label>
+                @error('registration_no')<span class="msg-err">{{ $message }}</span>@enderror
+                <button class="btn primary" type="submit">Save and check again</button>
             </form>
-            @if ($r->verification_document)<p class="sub" style="margin-top:12px">✓ A document is on file and waiting for review.</p>@endif
+            <p class="sub" style="margin-top:12px">Your login email must be a company email on the same domain as your website.</p>
         @endif
     </div>
 </section>

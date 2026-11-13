@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\VerificationReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecruiterAuthController;
 use App\Http\Controllers\RecruiterDashboardController;
@@ -9,6 +8,7 @@ use App\Http\Controllers\RecruiterVerificationController;
 use App\Http\Controllers\RecruiterApplicantsController;
 use App\Http\Controllers\RecruiterInterviewsController;
 use App\Http\Controllers\RecruiterJobsController;
+use App\Http\Controllers\RecruiterCompanyController;
 use App\Http\Controllers\CandidateDashboardController;
 use App\Http\Controllers\CandidateJobsController;
 use App\Http\Controllers\CandidateApplicationsController;
@@ -35,20 +35,22 @@ Route::middleware('guest:recruiter')->prefix('recruiter')->group(function () {
 /* ---------- Recruiter: logged in ---------- */
 Route::middleware('auth:recruiter')->prefix('recruiter')->group(function () {
     Route::post('/logout', [RecruiterAuthController::class, 'logout'])->name('recruiter.logout');
-
+    Route::get('/company', [RecruiterCompanyController::class, 'show'])->name('recruiter.company');
+    Route::put('/company', [RecruiterCompanyController::class, 'update'])->name('recruiter.company.update');
     Route::get('/dashboard', [RecruiterDashboardController::class, 'index'])->name('recruiter.dashboard');
     Route::get('/applicants', [RecruiterApplicantsController::class, 'index'])->name('recruiter.applicants');
     Route::get('/jobs',       [RecruiterJobsController::class, 'index'])->name('recruiter.jobs');
     Route::get('/interviews', [RecruiterInterviewsController::class, 'index'])->name('recruiter.interviews');
 
     Route::view('/verification', 'recruiter.verification')->name('recruiter.verification');
-    Route::post('/verification/upload', [RecruiterVerificationController::class, 'upload'])
-        ->middleware('throttle:10,1')->name('recruiter.verification.upload');
+    Route::post('/verification/update',  [RecruiterVerificationController::class, 'update'])->middleware('throttle:10,1')->name('recruiter.verification.update');
     Route::post('/verification/recheck', [RecruiterVerificationController::class, 'recheck'])
         ->middleware('throttle:5,1')->name('recruiter.verification.recheck');
 
     // verified recruiters only
     Route::middleware('recruiter.verified')->group(function () {
+        Route::put('/jobs/{job}',    [RecruiterJobsController::class, 'update']);
+        Route::delete('/jobs/{job}', [RecruiterJobsController::class, 'destroy']);
         Route::post('/tasks', [RecruiterDashboardController::class, 'storeTask'])->name('recruiter.tasks.store');
         Route::post('/tasks/{task}/toggle', [RecruiterDashboardController::class, 'toggleTask'])->name('recruiter.tasks.toggle');
         Route::delete('/tasks/{task}', [RecruiterDashboardController::class, 'destroyTask'])->name('recruiter.tasks.destroy');
@@ -83,14 +85,6 @@ Route::middleware(['auth', 'candidate'])->prefix('candidate')->name('candidate.'
     Route::get('/profile', [CandidateProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [CandidateProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/cv', [CandidateProfileController::class, 'cv'])->name('profile.cv');
-});
-
-/* ---------- Admin: company review ---------- */
-Route::middleware(['auth', 'can:review-verifications'])->prefix('admin')->group(function () {
-    Route::get('/verifications', [VerificationReviewController::class, 'index'])->name('admin.verifications');
-    Route::get('/verifications/{recruiter}/document', [VerificationReviewController::class, 'document'])->name('admin.verifications.document');
-    Route::post('/verifications/{recruiter}/approve', [VerificationReviewController::class, 'approve'])->name('admin.verifications.approve');
-    Route::post('/verifications/{recruiter}/reject', [VerificationReviewController::class, 'reject'])->name('admin.verifications.reject');
 });
 
 /* ---------- Candidate (Breeze) ---------- */
