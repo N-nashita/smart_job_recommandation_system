@@ -2,14 +2,13 @@
 
 @section('title', 'Interviews — JobSphere')
 
+@section('page-eyebrow', 'Candidate portal')
+@section('page-title', 'Interviews')
+@section('page-sub', 'Interview calls scheduled by recruiters.')
+
 @section('main')
 <div class="page-head">
     <div>
-        <div class="eyebrow">Candidate portal</div>
-        <h1 style="margin-top:10px">Interviews</h1>
-        <p id="sub">Interview calls scheduled by recruiters.</p>
-    </div>
-    <div class="acts">
         <a href="{{ route('candidate.jobs') }}" class="btn primary">
             <svg class="ic"><use href="#i-brief"/></svg> Browse jobs
         </a>
@@ -17,7 +16,10 @@
 </div>
 
 <section class="glass card reveal">
-    <div class="table-wrap">
+    @if (session('status'))
+        <div class="interview-alert">{{ session('status') }}</div>
+    @endif
+    <div class="table-wrap interview-table">
         <table>
             <thead>
                 <tr>
@@ -34,25 +36,36 @@
                 @php
                     $job     = $iv->application?->job;
                     $recruiter = optional($job?->recruiter);
-                    $statusLabel = ucfirst($iv->status);
+                    $statusLabel = $iv->status === 'confirmed' ? 'Accepted' : ucfirst($iv->status);
                     $statusClass = 'stage '.str_replace(' ', '-', $iv->status);
                     $when = $iv->scheduled_at?->setTimezone('Asia/Dhaka')->format('l, j F Y · H:i') ?? '—';
                 @endphp
                 <tr>
-                    <td><b>{{ $job?->title ?? '—' }}</b></td>
-                    <td>{{ $recruiter->company_name ?? '—' }}</td>
-                    <td>{{ $iv->round ?? '—' }} · {{ $iv->mode ?? '—' }}</td>
-                    <td>{{ $when }}</td>
+                    <td class="interview-job"><b>{{ $job?->title ?? '—' }}</b></td>
+                    <td class="interview-company">{{ $recruiter->company_name ?? '—' }}</td>
+                    <td><span class="interview-mode">{{ $iv->round ?? '—' }} · {{ $iv->mode ?? '—' }}</span></td>
+                    <td class="interview-when">{{ $when }}</td>
                     <td><span class="stage {{ $statusClass }}">{{ $statusLabel }}</span></td>
-                    <td style="text-align:right">
-                        @if ($iv->status === 'cancelled')
-                            <span class="btn applied sm" style="cursor:default">Cancelled</span>
-                        @elseif ($iv->status === 'done')
-                            <span class="btn applied sm" style="cursor:default">Completed</span>
-                        @else
-                            <a href="{{ route('candidate.jobs.show', $job?->id ?? 0) }}" class="btn primary sm">View job</a>
-                        @endif
-                    </td>
+<td class="interview-actions">
+    @if ($iv->status === 'cancelled')
+        <span class="btn applied sm" style="cursor:default">Cancelled</span>
+    @elseif ($iv->status === 'done')
+        <span class="btn applied sm" style="cursor:default">Completed</span>
+    @elseif (in_array($iv->status, ['accepted', 'confirmed'], true))
+        <span class="btn primary sm" style="cursor:default">Accepted</span>
+    @elseif ($iv->status === 'rejected')
+        <span class="btn applied sm" style="cursor:default">Declined</span>
+    @else
+        <form method="POST" action="{{ route('candidate.interviews.accept', $iv->id) }}" style="display:inline">
+            @csrf
+            <button class="btn primary sm" type="submit" onclick="return confirm('Accept this interview?')">Accept</button>
+        </form>
+        <form method="POST" action="{{ route('candidate.interviews.reject', $iv->id) }}">
+            @csrf
+            <button class="btn ghost sm" type="submit" onclick="return confirm('Decline this interview?')">Decline</button>
+        </form>
+    @endif
+</td>
                 </tr>
             @empty
                 <tr>

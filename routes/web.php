@@ -78,6 +78,8 @@ Route::middleware(['auth', 'candidate'])->prefix('candidate')->name('candidate.'
     Route::delete('/applications/{application}', [CandidateApplicationsController::class, 'destroy'])->name('applications.destroy');
 
     Route::get('/interviews',  [CandidateInterviewsController::class, 'index'])->name('interviews');
+    Route::post('/interviews/{interview}/accept', [CandidateInterviewsController::class, 'accept'])->name('interviews.accept');
+    Route::post('/interviews/{interview}/reject', [CandidateInterviewsController::class, 'reject'])->name('interviews.reject');
 
     Route::get('/notifications', [CandidateNotificationsController::class, 'index'])->name('notifications');
     Route::patch('/notifications/{notification}/read', [CandidateNotificationsController::class, 'read'])->name('notifications.read');

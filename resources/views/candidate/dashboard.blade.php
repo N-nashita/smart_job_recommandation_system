@@ -1,6 +1,8 @@
 @extends('layouts.candidate')
 
 @section('title', 'Dashboard — JobSphere')
+@section('page-title', 'Dashboard')
+@section('page-sub', 'Your applications, interviews and saved jobs in one place.')
 
 @section('main')
 @php
@@ -18,7 +20,7 @@
         <h1>{{ $greeting }}, <em>{{ $first }}.</em></h1>
         <p>Your applications, interviews and saved jobs in one place.</p>
         <div class="chips">
-            <div class="chip"><b>{{ $stats['applications'] }}</b><span>Applications</span></div>
+        <div class="chip"><b id="applications-count">{{ $stats['applications'] }}</b><span>Applications</span></div>
             <div class="chip"><b>{{ $stats['interviews'] }}</b><span>Upcoming interviews</span></div>
             <div class="chip"><b>{{ $stats['saved'] }}</b><span>Saved jobs</span></div>
             
@@ -68,7 +70,7 @@
                         <th>Applied</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="recent-applications-body">
                 @forelse ($applications->take(5) as $a)
                     @php
                         $statusLabel = match ($a->status) {
@@ -124,6 +126,8 @@
                     @else
                         <button class="btn primary sm apply-btn"
                                 data-url="{{ route('candidate.applications.store', $job->id) }}"
+                                data-job-id="{{ $job->id }}"
+                                data-job-title="{{ $job->title }}"
                                 type="button">Apply</button>
                     @endif
                     @if ($verified)
@@ -140,25 +144,32 @@
     </div>
 </section>
 
+@endsection
+
 @push('scripts')
 <script>
-@verbatim
 (() => {
-    document.querySelectorAll('.apply-btn').forEach((b) => {
-        b.addEventListener('click', async () => {
-            try {
-                await window.api(b.dataset.url, 'POST');
-                b.textContent = 'Applied';
-                b.classList.add('applied');
-                b.disabled = true;
-                window.toast('Application submitted.');
-            } catch (err) {
-                window.toast(err.data && err.data.message ? err.data.message : err.message);
-            }
-        });
+    document.addEventListener('application:submitted', (event) => {
+        const body = document.getElementById('recent-applications-body');
+        const count = document.getElementById('applications-count');
+        if (!body) return;
+
+        const empty = body.querySelector('.empty-note');
+        if (empty) empty.closest('tr').remove();
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><b></b></td>
+            <td>—</td>
+            <td><span class="stage">Applied</span></td>
+            <td>Just now</td>
+        `;
+        row.querySelector('td b').textContent = event.detail.jobTitle;
+        body.prepend(row);
+
+        while (body.children.length > 5) body.lastElementChild.remove();
+        if (count) count.textContent = String(Number(count.textContent || 0) + 1);
     });
 })();
-@endverbatim
 </script>
 @endpush
-@endsection

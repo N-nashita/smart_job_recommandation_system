@@ -34,6 +34,7 @@ class CandidateDashboardController extends Controller
 
         $recommended = JobPost::open()
             ->where('is_suspicious', false)
+            ->whereDoesntHave('applications', fn ($q) => $q->where('candidate_id', $c->id))
             ->with('recruiter')->get()
             ->map(fn ($j) => ['job' => $j, 'score' => $match->score($c, $j)])
             ->sortByDesc('score')

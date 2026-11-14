@@ -24,7 +24,7 @@
             const RULES = {
                 name: v => v.trim().length < 2 ? 'Please enter your full name.' : '',
                 email: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? '' : 'Enter a valid email address.',
-                phone: v => /^[0-9\s\-]{9,12}$/.test(v.trim()) ? '' : 'Enter a valid phone number.',
+                phone: v => /^\+?[0-9\s\-()]{7,20}$/.test(v.trim()) ? '' : 'Enter a valid phone number.',
                 password: v => v.length < 8 ? 'Use at least 8 characters.' : (!/[A-Za-z]/.test(v) || !/\d/.test(v)) ? 'Include at least one letter and one number.' : '',
                 password_confirmation: v => !v ? 'Please confirm your password.' : v !== el('password').value ? 'Passwords do not match.' : '',
                 category: v => v ? '' : 'Select a job category.',
@@ -135,7 +135,7 @@
                     const d = document.createElement('div');
                     const dt = document.createElement('dt'); dt.textContent = label;
                     const dd = document.createElement('dd');
-                    dd.textContent = (n === 'phone' ? '+880 ' : '') + (el(n).value.trim() || '—');
+                    dd.textContent = el(n).value.trim() || '—';
                     d.append(dt, dd);
                     dl.append(d);
                 });
@@ -160,7 +160,7 @@
                 const body = { agree: true, password: el('password').value, password_confirmation: el('password_confirmation').value };
                 ['name', 'email', 'phone', 'category', 'experience', 'degree', 'grad_year', 'institution', 'major', 'cgpa']
                     .forEach(n => { body[n] = el(n).value.trim(); });
-                body.phone = '+880' + body.phone.replace(/\D/g, '').replace(/^0/, '');
+                body.phone = body.phone.trim();
 
                 const label = submitBtn.textContent;
                 submitBtn.disabled = true;

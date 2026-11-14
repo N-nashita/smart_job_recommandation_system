@@ -14,7 +14,7 @@ class StoreApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'job_id' => ['required', 'integer', 'exists:job_posts,id'],
+            'cv_template' => ['required', 'string', 'in:classic,modern,europass'],
         ];
     }
 }

@@ -1,8 +1,6 @@
-/* Shared by all recruiter pages: toast, logout, scroll-reveal.
-   The sidebar and company details are rendered by Blade, so nothing is fetched here. */
+/* Recruiter pages: toast, logout, API fetch helper, scroll-reveal. */
 (() => {
-    const csrf = () =>
-        document.querySelector('meta[name="csrf-token"]').content;
+    const csrf = () => document.querySelector('meta[name="csrf-token"]').content;
 
     window.toast = (msg) => {
         const t = document.getElementById("toast");
@@ -10,6 +8,28 @@
         t.classList.add("show");
         clearTimeout(window.toast.h);
         window.toast.h = setTimeout(() => t.classList.remove("show"), 2400);
+    };
+
+    // JSON fetch helper (CSRF + error body -> Error with .data)
+    window.api = async (url, method, body) => {
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+        const res = await fetch(url, {
+            method,
+            headers: {
+                "X-CSRF-TOKEN": token,
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: body ? JSON.stringify(body) : undefined,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            throw Object.assign(
+                new Error(data.message || "Something went wrong. Please try again."),
+                { data }
+            );
+        }
+        return data;
     };
 
     document.getElementById("logout").addEventListener("click", async (e) => {

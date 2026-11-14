@@ -32,8 +32,8 @@
         </div>
 
         <div class="nav-cta">
-            <a href="{{ route('candidate.login') }}" class="btn ghost">Log in</a>
-            <a href="{{ route('candidate.register') }}" class="btn primary">Get started</a>
+            <a href="{{ route('candidate.login') }}" class="btn ghost" id="nav-login">Log in</a>
+            <a href="{{ route('candidate.register') }}" class="btn primary" id="nav-register">Get started</a>
         </div>
     </nav>
 
@@ -389,6 +389,8 @@
             lead: 'A more considered way to find your next chapter: thoughtfully matched roles, ambitious teams, and a path that makes sense.',
             cta: 'Create my profile',
             href: '/candidate/register',
+            login: '/candidate/login',
+            register: '/candidate/register',
             note: 'Your CV is generated for you.'
         },
 
@@ -396,6 +398,8 @@
             lead: 'Meet candidates who genuinely fit. Verified company, ranked applicants, and no fake-posting noise.',
             cta: 'Post a job',
             href: '/recruiter/register',
+            login: '/recruiter/login',
+            register: '/recruiter/register',
             note: 'Verified recruiters only.'
         }
     };
@@ -413,6 +417,8 @@
             document.getElementById('cta-note').textContent = m.note;
 
             const cta = document.getElementById('main-cta');
+            document.getElementById('nav-login').href = m.login;
+            document.getElementById('nav-register').href = m.register;
 
             cta.href = m.href;
             cta.firstChild.textContent = m.cta + ' ';

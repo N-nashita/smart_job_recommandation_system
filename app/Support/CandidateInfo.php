@@ -17,7 +17,7 @@ class CandidateInfo
     public static function location(User $u): string  { return (string) ($u->location ?? $u->city ?? ''); }
     public static function color(User $u): string     { return self::COLORS[$u->id % 4]; }
 
-    public static function initials(User $u): string
+    public static function initials($u): string
     {
         return collect(preg_split('/\s+/', trim($u->name)))->filter()->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->take(2)->implode('');
     }
