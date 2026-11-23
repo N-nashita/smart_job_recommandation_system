@@ -9,6 +9,7 @@ use App\Http\Controllers\RecruiterApplicantsController;
 use App\Http\Controllers\RecruiterInterviewsController;
 use App\Http\Controllers\RecruiterJobsController;
 use App\Http\Controllers\RecruiterCompanyController;
+use App\Http\Controllers\RecruiterCandidateController;
 use App\Http\Controllers\CandidateDashboardController;
 use App\Http\Controllers\CandidateJobsController;
 use App\Http\Controllers\CandidateApplicationsController;
@@ -49,6 +50,8 @@ Route::middleware('auth:recruiter')->prefix('recruiter')->group(function () {
 
     // verified recruiters only
     Route::middleware('recruiter.verified')->group(function () {
+        Route::get('/applicants/{application}/profile', [RecruiterCandidateController::class, 'profile'])->name('recruiter.applicants.profile');
+        Route::get('/applicants/{application}/cv',      [RecruiterCandidateController::class, 'cv'])->name('recruiter.applicants.cv');
         Route::put('/jobs/{job}',    [RecruiterJobsController::class, 'update']);
         Route::delete('/jobs/{job}', [RecruiterJobsController::class, 'destroy']);
         Route::post('/tasks', [RecruiterDashboardController::class, 'storeTask'])->name('recruiter.tasks.store');

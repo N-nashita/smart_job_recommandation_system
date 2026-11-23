@@ -49,6 +49,9 @@
     const ST = { confirmed: 'Confirmed', waiting: 'Awaiting reply', done: 'Completed' };
     const MODE = { meet: 'Google Meet', phone: 'Phone call', office: 'On-site' };
     let tab = 'upcoming', cur = null, slot = null;
+    // new invites are "waiting" until the candidate accepts, so open on the first tab that has something
+    const has = k => IV.some(i => k === 'upcoming' ? i.status === 'confirmed' && i.d >= 0 : k === 'waiting' ? i.status === 'waiting' : i.status === 'done');
+    tab = ['upcoming', 'waiting', 'past'].find(has) || 'upcoming';
     const ini = i => i.ini;
     const dayLabel = d => { const x = new Date(); x.setDate(x.getDate() + d); const s = x.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
         return d === 0 ? 'Today · ' + s : d === 1 ? 'Tomorrow · ' + s : s; };

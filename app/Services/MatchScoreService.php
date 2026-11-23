@@ -7,33 +7,19 @@ use App\Models\User;
 
 /**
  * Compatibility score between a candidate and a job (0-100).
- *
- * TODO: this is a rule-based placeholder. Replace with the trained
- * match model (skills vs requirements, experience band, location, etc.).
+ * Uses MatchEngine (embeddings + skills + experience + location).
  */
 class MatchScoreService
 {
+    public function __construct(private MatchEngine $engine) {}
+
     public function score(User $candidate, JobPost $job): int
     {
-        $score = 0;
-        $title = mb_strtolower((string) $job->title);
-        $category = mb_strtolower((string) $candidate->category);
+        return (int) $this->engine->breakdown($candidate, $job)['total'];
+    }
 
-        if ($category) {
-            if (str_contains($title, $category) || str_contains($category, $title)) {
-                $score += 55;   // direct category match
-            } else {
-                $score += 15;   // same general area
-            }
-        }
-
-        if ($candidate->experience) {
-            $score += 25;       // has experience stated
-        }
-        if ($candidate->degree && $candidate->institution) {
-            $score += 20;       // education stated
-        }
-
-        return (int) min(100, max(0, $score));
+    public function breakdown(User $candidate, JobPost $job): array
+    {
+        return $this->engine->breakdown($candidate, $job);
     }
 }
