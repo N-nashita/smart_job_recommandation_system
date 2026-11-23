@@ -20,7 +20,12 @@
         <div class="f"><label for="loc">Location</label><input id="loc" placeholder="e.g. Khulna or Remote"><span class="msg-err"></span></div>
         <div class="f"><label for="type">Type</label><select class="sel" id="type" style="width:100%"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></div>
         <div class="f"><label for="smin">Salary range (BDT / month)</label>
-            <div class="two"><input id="smin" type="number" min="0" placeholder="Min"><input id="smax" type="number" min="0" placeholder="Max"></div><span class="msg-err"></span></div>
+            <div class="two">
+                <input id="smin" type="text" inputmode="numeric" autocomplete="off" placeholder="Min">
+                <input id="smax" type="text" inputmode="numeric" autocomplete="off" placeholder="Max">
+            </div>
+            <span class="msg-err"></span>
+        </div>
         <div class="f wide"><label for="desc">Description</label><textarea id="desc" rows="5" placeholder="What will this person do? What skills do they need?"></textarea><span class="msg-err"></span></div>
         <div class="f wide"><label for="skills">Required skills <small style="color:var(--muted)">(comma separated)</small></label><input id="skills" placeholder="Laravel, MySQL, REST APIs"></div>
         <div class="wide row" style="display:flex;gap:12px"><button class="btn primary" type="submit" value="publish">Publish now</button><button class="btn ghost" type="submit" value="draft">Save as draft</button><button class="btn primary" type="submit" value="save" id="saveEdit" hidden>Save changes</button></div>
@@ -68,6 +73,9 @@
     }
 
     $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { filter = b.dataset.f; render(); } });
+    ['smin', 'smax'].forEach(id => $('#' + id).addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    }));
     $('#grid').addEventListener('click', e => {
         const b = e.target.closest('[data-a]'); if (!b) return;
         const j = JOBS.find(x => x.id == b.closest('.job-card').dataset.id), a = b.dataset.a;

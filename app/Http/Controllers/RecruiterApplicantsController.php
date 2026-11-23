@@ -23,6 +23,13 @@ class RecruiterApplicantsController extends Controller
         if ($r->verification_status === 'verified') {
             $people = Application::whereHas('job', fn ($q) => $q->where('recruiter_id', $r->id))
                 ->with('candidate', 'job')->get()
+                ->each(function ($a) {
+                    if ($a->candidate && $a->job && ($a->candidate->updated_at > $a->updated_at || $a->job->updated_at > $a->updated_at)) {
+                        $b = app(\App\Services\MatchEngine::class)->breakdown($a->candidate, $a->job);
+                        $a->update(['match_score' => $b['total'], 'skills_score' => $b['skills'],
+                                    'experience_score' => $b['experience'], 'location_score' => $b['location']]);
+                    }
+                })
                 ->filter(fn ($a) => $a->candidate)
                 ->map(fn ($a) => $this->row($a))->values();
             $titles = JobPost::where('recruiter_id', $r->id)->orderBy('title')->pluck('title')->unique()->values();
@@ -79,8 +86,8 @@ class RecruiterApplicantsController extends Controller
             'n'   => CandidateInfo::name($u),
             'ini' => CandidateInfo::initials($u),
             'job' => $a->job->title,
-            't'   => $title ?: 'Applied for '.$a->job->title,
-            'loc' => CandidateInfo::location($u) ?: '—',
+            't'   => $title,
+            'loc' => CandidateInfo::location($u),
             'm'   => (int) $a->match_score,
             'sk'  => CandidateInfo::skills($u),
             'up'  => (int) ($u->updated_at && $u->updated_at->gt(now()->subDays(3))),
@@ -89,7 +96,7 @@ class RecruiterApplicantsController extends Controller
             'st'  => self::TO_UI[$a->status] ?? 'new',
             'bd'  => [(int) $a->skills_score, (int) $a->experience_score, (int) $a->location_score],
             'av'  => CandidateInfo::color($u),
-            'sum' => $a->summary ?: 'No summary yet.',
+            'sum' => $a->summary === 'Application submitted via JobSphere.' ? '' : (string) $a->summary,
         ];
     }
 }

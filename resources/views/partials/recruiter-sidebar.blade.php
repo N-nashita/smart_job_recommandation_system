@@ -15,7 +15,7 @@
     <a href="{{ url('/') }}" class="logo"><i></i> JobSphere</a>
 
     @foreach ($nav as [$route, $label, $icon])
-        <a class="nv {{ request()->routeIs($route) ? 'on' : '' }}" href="{{ route($route) }}">
+        <a class="nv {{ request()->routeIs($route, $route.'.*') ? 'on' : '' }}" href="{{ route($route) }}">
             <svg class="ic"><use href="#{{ $icon }}"/></svg><span>{{ $label }}</span>
             @if ($route === 'recruiter.applicants' && ($newApps ?? 0) > 0)<em>{{ $newApps }}</em>@endif
             @if ($route === 'recruiter.verification' && $status !== 'verified')<em class="dot-warn">!</em>@endif

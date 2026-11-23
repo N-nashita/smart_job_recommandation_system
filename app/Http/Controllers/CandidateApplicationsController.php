@@ -48,18 +48,18 @@ class CandidateApplicationsController extends Controller
             return response()->json(['message' => 'You have already applied to this job.'], 422);
         }
 
-        $score = $match->score($c, $job);
+        $b = $match->breakdown($c, $job);
 
         Application::create([
-            'job_post_id' => $job->id,
-            'candidate_id' => $c->id,
-            'match_score' => $score,
-            'cv_template' => $request->validated('cv_template'),
-            'status'      => 'new',
-            'skills_score' => (int) ($score * 0.9),
-            'experience_score' => (int) ($score * 0.85),
-            'location_score' => (int) ($score * 0.95),
-            'summary'     => 'Application submitted via JobSphere.',
+            'job_post_id'      => $job->id,
+            'candidate_id'     => $c->id,
+            'match_score'      => $b['total'],
+            'cv_template'      => $request->validated('cv_template'),
+            'status'           => 'new',
+            'skills_score'     => $b['skills'],
+            'experience_score' => $b['experience'],
+            'location_score'   => $b['location'],
+            'summary'          => 'Application submitted via JobSphere.',
         ]);
 
         return response()->json(['ok' => true, 'message' => 'Application submitted.']);

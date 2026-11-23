@@ -85,19 +85,18 @@
     }
 
     function renderList(list) {
-        $('#cands').innerHTML = list.length ? list.map(p => `
-            <article class="cand ${p.id === selId ? 'is-sel' : ''}" data-id="${p.id}" tabindex="0">
-                <div class="avatar ${p.av}">${ini(p)}</div>
-                <div>
-                    <div class="nm">${p.n} ${p.up ? '<span class="tag">Updated profile</span>' : ''} <span class="stage ${p.st}">${LABEL[p.st]}</span></div>
-                    <div class="rl">${p.t}</div>
-                    <div class="skills">${p.sk.map(s => `<span>${s}</span>`).join('')}</div>
-                    <div class="meta2"><span>${p.job} · ${p.loc} · Updated ${p.upT}</span></div>
-                </div>
-                <div class="right"><div class="ring ${p.m < 85 ? 'warm' : ''}" style="--p:${p.m}"><b>${p.m}</b></div>match</div>
-            </article>`).join('') : `<div class="empty">${people.length ? 'No applicants match these filters. Try clearing a filter.' : 'No applicants yet. They will appear here once candidates apply to your jobs.'}</div>`;
-    }
-
+    $('#cands').innerHTML = list.length ? list.map(p => `
+        <article class="cand ${p.id === selId ? 'is-sel' : ''}" data-id="${p.id}" tabindex="0">
+            <div class="avatar ${p.av}">${ini(p)}</div>
+            <div class="cbody">
+                <div class="nm">${p.n} ${p.up ? '<span class="tag">Updated profile</span>' : ''} <span class="stage ${p.st}">${LABEL[p.st]}</span></div>
+                <div class="crole">${p.job}${p.t ? ' · ' + p.t : ''}</div>
+                <div class="skills">${p.sk.map(s => `<span>${s}</span>`).join('')}</div>
+                <div class="meta2"><span>${[p.loc, 'Updated ' + p.upT].filter(Boolean).join(' · ')}</span></div>
+            </div>
+            <div class="right"><div class="ring ${p.m < 85 ? 'warm' : ''}" style="--p:${p.m}"><b>${p.m}</b></div>match</div>
+        </article>`).join('') : `<div class="empty">${people.length ? 'No applicants match these filters. Try clearing a filter.' : 'No applicants yet. They will appear here once candidates apply to your jobs.'}</div>`;
+}
     function renderBoard(list) {
         $('#board').innerHTML = STAGES.map(([k, l], i) => {
             const items = list.filter(p => p.st === k);
@@ -118,18 +117,21 @@
         const closed = p.st === 'rejected';
         $('#prev').innerHTML = `
             <div class="ph"><div class="avatar ${p.av}">${ini(p)}</div><div><h3>${p.n}</h3>
-                <div class="rl"><span>${p.t}</span><span><svg class="ic" style="vertical-align:-2px"><use href="#i-pin"/></svg> ${p.loc}</span></div></div>
+                <div class="rl">${p.t ? `<span>${p.t}</span>` : ''}<span>Applied for ${p.job}</span>${p.loc ? `<span><svg class="ic" style="vertical-align:-2px"><use href="#i-pin"/></svg> ${p.loc}</span>` : ''}</div></div>
                 <div class="ring ${p.m < 85 ? 'warm' : ''}" style="--p:${p.m}"><b>${p.m}</b></div></div>
-            <p class="sum">${p.sum}</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="stage ${p.st}">${LABEL[p.st]}</span><span class="tag g">Applied for ${p.job}</span>${p.up ? '<span class="tag">Updated ' + p.upT + '</span>' : ''}</div>
+            <div class="lnk">
+                <a href="/recruiter/applicants/${p.id}/profile" target="_blank" rel="noopener"><svg class="ic"><use href="#i-users"/></svg> View full profile</a>
+                <a href="/recruiter/applicants/${p.id}/cv?download=1" target="_blank" rel="noopener"><svg class="ic"><use href="#i-file"/></svg> Download CV</a>
+            </div>
+            ${p.sum ? `<p class="sum">${p.sum}</p>` : ''}
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="stage ${p.st}">${LABEL[p.st]}</span>${p.up ? '<span class="tag">Updated ' + p.upT + '</span>' : ''}</div>
             <div class="bd">${[['Skills', p.bd[0]], ['Experience', p.bd[1]], ['Location', p.bd[2]]].map(([l, v]) => `<div><span>${l}</span><i style="--v:${v}%"></i><b>${v}%</b></div>`).join('')}</div>
             <div class="skills">${p.sk.map(s => `<span>${s}</span>`).join('')}</div>
             <div class="acts2">
                 <button class="btn ${p.st === 'short' || p.st === 'interview' || p.st === 'offer' ? 'mini done' : 'ghost'}" data-a="short" ${closed ? 'disabled' : ''}>${p.st === 'new' || closed ? 'Shortlist' : 'Shortlisted ✓'}</button>
                 <button class="btn primary" data-a="call" ${p.st === 'interview' || p.st === 'offer' || closed ? 'disabled style="opacity:.55;cursor:default"' : ''}><svg class="ic"><use href="#i-phone"/></svg> ${p.st === 'interview' || p.st === 'offer' ? 'Invited' : 'Call for interview'}</button>
                 ${closed ? '<button class="btn ghost" data-a="reopen">Reopen</button>' : '<button class="btn danger" data-a="reject">Reject</button>'}
-            </div>
-            <div class="lnk"><a href="#" data-a="profile"><svg class="ic"><use href="#i-users"/></svg> View full profile</a><button type="button" data-a="cv"><svg class="ic"><use href="#i-file"/></svg> Download CV</button></div>`;
+            </div>`;
     }
 
     function render() {
@@ -186,8 +188,6 @@
         if (a === 'call') return openCall(p);
         if (a === 'reject') return setStage(p, 'rejected', `You rejected <b>${p.n}</b>`, 'i-x');
         if (a === 'reopen') return setStage(p, 'new', `<b>${p.n}</b> reopened`, 'i-refresh');
-        if (a === 'profile') return window.toast('Full candidate profile opens here (connect to your teammate\'s profile page)');
-        if (a === 'cv') return window.toast('CV download starts here once the CV generator is connected');
     });
 
     // interview modal
